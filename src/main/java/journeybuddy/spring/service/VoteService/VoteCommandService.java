@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface VoteCommandService {
     //optionText만 사용할것임. placeIds는 필요없음
-    public List<VoteRequestDTO.VoteOptionRequestDTO> makeVote(VoteRequestDTO voteRequestDTO, String userEmail);
+    public VoteRequestDTO makeVote(VoteRequestDTO voteRequestDTO, String userEmail);
     public List<VoteOption> joinVote(Long voteId, List<Long> optionIds, Long userId);
     public List<VoteResponseDTO.VoteOptionResponseDTO> checkVoteResult(Long voteId);
     public Vote deleteVote(Long voteId,String userEmail);

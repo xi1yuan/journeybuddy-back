@@ -29,14 +29,14 @@ public class VoteRestController {
     private final UserRepository userRepository;
 
     @PostMapping("/make_vote")
-    public ApiResponse<List<VoteRequestDTO.VoteOptionRequestDTO>> makeVote(
+    public ApiResponse<VoteRequestDTO> makeVote(
             @RequestBody VoteRequestDTO voteRequestDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         // 유저 확인
         String userEmail = userDetails.getUsername();
         log.info("Received VoteRequestDTO: " + userEmail);
-        List<VoteRequestDTO.VoteOptionRequestDTO> options = voteCommandService.makeVote(voteRequestDTO, userEmail);
+        VoteRequestDTO options = voteCommandService.makeVote(voteRequestDTO, userEmail);
         return ApiResponse.onSuccess(options);
     }
 
@@ -45,6 +45,7 @@ public class VoteRestController {
                                                  @RequestParam List<Long> optionIds,
             @AuthenticationPrincipal UserDetails userDetails) {
 
+        try{
         String userEmail = userDetails.getUsername();
         Optional<User> optionalUser = userRepository.findByEmail(userEmail);
 
@@ -58,6 +59,23 @@ public class VoteRestController {
             List<VoteOption> options = voteCommandService.joinVote(voteId, optionIds, userId);
             return ApiResponse.onSuccess(options);
         }
+        } catch (Exception e) {
+            log.error("Error in joinVote API: ", e);
+        }
         return null;
+    }
+
+    @GetMapping("/vote_result")
+    public ApiResponse<List<VoteResponseDTO.VoteOptionResponseDTO>> checkResult(@RequestParam Long voteId){
+        List<VoteResponseDTO.VoteOptionResponseDTO> check = voteCommandService.checkVoteResult(voteId);
+        return ApiResponse.onSuccess(check);
+    }
+
+    @DeleteMapping("/vote/delete")
+    public ApiResponse<?> deleteVote(@RequestParam Long voteId,
+                                     @AuthenticationPrincipal UserDetails userDetails){
+        String userEmail = userDetails.getUsername();
+        voteCommandService.deleteVote(voteId,userEmail);
+        return ApiResponse.onSuccess(null);
     }
 }

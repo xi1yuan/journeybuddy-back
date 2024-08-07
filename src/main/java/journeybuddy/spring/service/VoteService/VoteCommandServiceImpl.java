@@ -33,7 +33,7 @@ public class VoteCommandServiceImpl implements VoteCommandService {
     //1. 투표 생성하기(플랜이 존재하지 않으면 예외처리, 플랜이 존재해야지만 투표기능 생성가능)
     //내가 만든 플랜에 대해서만 투표를 생성할 수 있음
     //여러개의 OptionText를 만들 수 있음.
-    public List<VoteRequestDTO.VoteOptionRequestDTO> makeVote(VoteRequestDTO voteRequestDTO, String userEmail) {
+    public VoteRequestDTO makeVote(VoteRequestDTO voteRequestDTO, String userEmail) {
         Long planId = voteRequestDTO.getPlanId();
         List<VoteRequestDTO.VoteOptionRequestDTO> options = voteRequestDTO.getOptions();
 
@@ -68,6 +68,8 @@ public class VoteCommandServiceImpl implements VoteCommandService {
             log.info("투표 저장 성공. planId: {}, userEmail: {}", planId, userEmail);
 
             // 옵션 저장
+            List<VoteRequestDTO.VoteOptionRequestDTO> savedOptions = new ArrayList<>();
+            // 옵션 저장
             for (VoteRequestDTO.VoteOptionRequestDTO option : options) {
                 VoteOption voteOption = VoteOption.builder()
                         .vote(vote)
@@ -75,19 +77,28 @@ public class VoteCommandServiceImpl implements VoteCommandService {
                         .voteCount(0)
                         .build();
                 voteOptionRepository.save(voteOption);
-                log.info("투표 옵션 저장 성공. options: {}", option);
+                log.info("투표 옵션 저장 성공. options: {}", option.getOptionText());
 
+                savedOptions.add(option);
             }
 
+            // 저장된 옵션 리스트를 포함하여 새로운 VoteRequestDTO 객체 생성
+            VoteRequestDTO responseDTO = new VoteRequestDTO();
+            responseDTO.setPlanId(planId);
+            responseDTO.setTitle(vote.getTitle());
+            responseDTO.setDescription(vote.getDescription());
+            responseDTO.setStartDate(vote.getStartDate());
+            responseDTO.setEndDate(vote.getEndDate());
+            responseDTO.setOptions(savedOptions);
 
-            // 성공적으로 저장된 옵션 반환
-            return options;
+            // 전체 투표 정보가 포함된 VoteRequestDTO 객체 반환
+            return responseDTO;
         } else {
             throw new RuntimeException("Plan with ID " + planId + " does not exist.");
         }
     }
 
-    //2.투표하기
+    //2.투표하기(기간만료, 한 옵션에 2번투표하는경우에는 에러발생, 한 투표자가 여러항목에 투표가능)
     public List<VoteOption> joinVote(Long voteId, List<Long> optionIds, Long userId) {
         // 투표가 존재하는지 확인
         Vote existingVote = voteRepository.findById(voteId)
@@ -100,13 +111,13 @@ public class VoteCommandServiceImpl implements VoteCommandService {
             throw new RuntimeException("Voting period for Vote ID " + voteId + " is not valid.");
         }
 
-        // 사용자의 기존 투표 기록을 확인합니다.
+        // 사용자의 기존 투표 기록을 확인(set은 중복허용안함, set을 사용해서 optionId가 중복인지 아닌지 확인함)
         List<VoteRecord> existingRecords = voteRecordRepository.findByUserIdAndVoteOption_VoteId(userId, voteId);
         Set<Long> existingOptionIds = existingRecords.stream()
                 .map(record -> record.getVoteOption().getId())
                 .collect(Collectors.toSet());
 
-        // 선택된 옵션 중에서 이미 투표한 옵션을 제외합니다.
+        // 선택된 옵션 중에서 이미 투표한 옵션을 제외
         List<Long> newOptionIds = optionIds.stream()
                 .filter(optionId -> !existingOptionIds.contains(optionId))
                 .collect(Collectors.toList());
@@ -144,19 +155,27 @@ public class VoteCommandServiceImpl implements VoteCommandService {
     }
 
 
-    //투표 결과 확인
+    //3. 투표 결과 확인,누가 투표했는지 userid를 response로 반환함
     public List<VoteResponseDTO.VoteOptionResponseDTO> checkVoteResult(Long voteId) {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new RuntimeException("Vote with ID " + voteId + " does not exist."));
         // 해당 투표의 모든 VoteOption 조회
         List<VoteOption> voteOptions = voteOptionRepository.findByVoteId(voteId);
 
-        // 결과를 DTO로 변환
         List<VoteResponseDTO.VoteOptionResponseDTO> result = new ArrayList<>();
         for (VoteOption option : voteOptions) {
+            // 각 옵션에 대한 투표 기록 조회
+            List<VoteRecord> voteRecords = voteRecordRepository.findByVoteOptionId(option.getId());
+            // 투표한 사용자 ID 목록 생성
+            List<Long> userIds = voteRecords.stream()
+                    .map(record -> record.getUser().getId())
+                    .collect(Collectors.toList());
+
+            // 결과를 DTO로 변환
             VoteResponseDTO.VoteOptionResponseDTO dto = VoteResponseDTO.VoteOptionResponseDTO.builder()
                     .id(option.getId())
                     //        .optionText(option.getOptionText())
+                    .userIds(userIds)
                     .voteCount(option.getVoteCount()) // 현재 투표 수 추가
                     .build();
             result.add(dto);
@@ -164,7 +183,8 @@ public class VoteCommandServiceImpl implements VoteCommandService {
         return result;
     }
 
-    //투표 삭제하기(내가 투표 개설자일때만 삭제가능,즉 내가 만든 plan일때만!)
+
+    //4. 투표 삭제하기(내가 투표 개설자일때만 삭제가능,즉 내가 만든 plan일때만!)
     public Vote deleteVote(Long voteId,String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User with email " + userEmail + " does not exist."));
@@ -176,6 +196,11 @@ public class VoteCommandServiceImpl implements VoteCommandService {
         if (!plan.getUser().equals(user)) {
             throw new RuntimeException("You can only create votes for plans you have created.");
         }
+        List<VoteOption> voteOptions = voteOptionRepository.findByVoteId(voteId);
+        for (VoteOption option : voteOptions) {
+            // 관련된 투표 기록 삭제
+            voteRecordRepository.deleteByVoteOptionId(option.getId());
+        }
         voteRepository.delete(vote);
 
         return vote;
@@ -184,10 +209,6 @@ public class VoteCommandServiceImpl implements VoteCommandService {
 
 
 
-//3.투표항목을 만든후 투표한 사람을 count하고 결과를 도출하기(count는 위 로직에서 구현함)
-    //4.투표할때 중복투표인지 확인하는 로직 추가하기
-    //admin로직 추가
-    //5. 결과 조회
 
 
 

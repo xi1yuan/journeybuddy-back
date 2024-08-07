@@ -17,12 +17,13 @@ public class VoteResponseDTO {
     LocalDate startDate;
     LocalDate endDate;
     Long planId;
-    Long placeId;
     boolean isAdmin; //권한이 있는 사용자인지
     boolean canVote; //중복투표인지 확인
     List<VoteOptionResponseDTO> options;
     LocalDate createdAt;
     LocalDate updatedAt;
+
+
 
 
     @Getter
@@ -34,6 +35,7 @@ public class VoteResponseDTO {
         Long id;
         String optionText;  // 옵션의 설명 또는 텍스트
         Integer voteCount;
+        private List<Long> userIds;
 
     }
 }
