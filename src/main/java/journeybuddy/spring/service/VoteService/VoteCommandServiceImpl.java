@@ -1,9 +1,6 @@
 package journeybuddy.spring.service.VoteService;
 
-import journeybuddy.spring.domain.Plan;
-import journeybuddy.spring.domain.User;
-import journeybuddy.spring.domain.Vote;
-import journeybuddy.spring.domain.VoteOption;
+import journeybuddy.spring.domain.*;
 import journeybuddy.spring.domain.mapping.Place;
 import journeybuddy.spring.repository.*;
 import journeybuddy.spring.web.dto.VoteDTO.VoteRequestDTO;
@@ -18,6 +15,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,6 +28,7 @@ public class VoteCommandServiceImpl implements VoteCommandService {
     private final VoteRepository voteRepository;
     private final PlanRepository planRepository;
     private final VoteOptionRepository voteOptionRepository;
+    private final VoteRecordRepository voteRecordRepository;
 
     //1. 투표 생성하기(플랜이 존재하지 않으면 예외처리, 플랜이 존재해야지만 투표기능 생성가능)
     //내가 만든 플랜에 대해서만 투표를 생성할 수 있음
@@ -88,7 +88,7 @@ public class VoteCommandServiceImpl implements VoteCommandService {
     }
 
     //2.투표하기
-    public List<VoteOption> joinVote(Long voteId, Long userId) {
+    public List<VoteOption> joinVote(Long voteId, List<Long> optionIds, Long userId) {
         // 투표가 존재하는지 확인
         Vote existingVote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new RuntimeException("Vote with ID " + voteId + " does not exist."));
@@ -100,24 +100,42 @@ public class VoteCommandServiceImpl implements VoteCommandService {
             throw new RuntimeException("Voting period for Vote ID " + voteId + " is not valid.");
         }
 
-        // 중복 투표인지 확인하는 로직
-        if (voteRepository.checkVoteDuplication(userId, voteId)) {
-            throw new RuntimeException("User with ID " + userId + " has already voted for Vote ID " + voteId + ".");
+        // 사용자의 기존 투표 기록을 확인합니다.
+        List<VoteRecord> existingRecords = voteRecordRepository.findByUserIdAndVoteOption_VoteId(userId, voteId);
+        Set<Long> existingOptionIds = existingRecords.stream()
+                .map(record -> record.getVoteOption().getId())
+                .collect(Collectors.toSet());
+
+        // 선택된 옵션 중에서 이미 투표한 옵션을 제외합니다.
+        List<Long> newOptionIds = optionIds.stream()
+                .filter(optionId -> !existingOptionIds.contains(optionId))
+                .collect(Collectors.toList());
+
+        if (newOptionIds.isEmpty()) {
+            throw new RuntimeException("No new options to vote for.");
         }
 
-        // VoteOption을 생성하거나 업데이트
+        // VoteOption을 가져와서 투표 수를 증가시킵니다.
+        List<VoteOption> voteOptions = voteOptionRepository.findByVoteIdAndIdIn(voteId, newOptionIds);
+        if (voteOptions.size() != newOptionIds.size()) {
+            throw new RuntimeException("Some options do not exist for Vote ID " + voteId);
+        }
+
         List<VoteOption> joinedVoteOptions = new ArrayList<>();
 
-        // voteOptionId를 올바르게 사용하여 VoteOption 찾기
-        List<VoteOption> voteOptions = voteOptionRepository.findByVoteId(voteId);
-        if (voteOptions.isEmpty()) {
-            throw new RuntimeException("No VoteOptions found for Vote ID " + voteId);
-        }
-
         for (VoteOption voteOption : voteOptions) {
+            // 투표 기록 추가
+            VoteRecord record = VoteRecord.builder()
+                    .user(userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User with ID " + userId + " does not exist.")))
+                    .voteOption(voteOption)
+                    .build();
+            voteRecordRepository.save(record);
+
             // 투표 수 증가
             voteOption.setVoteCount(voteOption.getVoteCount() + 1);
             voteOptionRepository.save(voteOption);
+
             joinedVoteOptions.add(voteOption);
             log.info("투표 옵션 업데이트 성공. optionId: {}, newVoteCount: {}", voteOption.getId(), voteOption.getVoteCount());
         }
