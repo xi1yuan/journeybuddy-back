@@ -34,6 +34,4 @@ public class Place { //원하는 장소 직접입력
     @Column(nullable = false)
     private double longitude;
 
-    @OneToMany(mappedBy = "place" ,cascade = CascadeType.ALL)
-    private List<VoteOption> voteOptionsList = new ArrayList<>();
 }

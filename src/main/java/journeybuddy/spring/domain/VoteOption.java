@@ -23,12 +23,12 @@ public class VoteOption {
     @JoinColumn(name = "vote_id")
     private Vote vote;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
-
-    //투표 수
+    //각 항목에 대한 투표 수
     @Column(nullable = false)
     private int voteCount;
+
+    @Column(nullable = false)
+    private String optionText;
+
 
 }

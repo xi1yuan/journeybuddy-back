@@ -1,11 +1,13 @@
 package journeybuddy.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import journeybuddy.spring.domain.common.BaseEntity;
 import journeybuddy.spring.domain.mapping.Place;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class Vote extends BaseEntity {
     private String description;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDate startDate;
 
     @Column(nullable = false)
@@ -38,16 +41,12 @@ public class Vote extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //한투표자가 여러항목에 투표가능함
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
-
     //한 플랜에 여러개의 투표항목을 만들 수 있음
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
+    //voteOption은 한 vote에 여러개가 존재함
     @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL)
     private List<VoteOption> votePlaceList = new ArrayList<>();
 

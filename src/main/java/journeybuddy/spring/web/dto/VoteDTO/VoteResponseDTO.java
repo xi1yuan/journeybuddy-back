@@ -5,8 +5,11 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VoteResponseDTO {
     Long id;
     String title;
@@ -29,7 +32,6 @@ public class VoteResponseDTO {
     @Builder
     public static class VoteOptionResponseDTO {
         Long id;
-        Long placeId;  // `Place` ID
         String optionText;  // 옵션의 설명 또는 텍스트
         Integer voteCount;
 
