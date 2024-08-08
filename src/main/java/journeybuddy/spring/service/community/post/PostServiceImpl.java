@@ -9,6 +9,7 @@ import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.repository.user.UserRepository;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
+import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -71,8 +72,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getPostDetail(Long postId) {
-        return null;
+    public PostDetailResponse getPostDetail(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
+            log.info("게시글을 찾을 수 없음.");
+            return new IllegalArgumentException("게시글을 찾을 수 없습니다.");
+        });
+
+        return PostConverter.toPostDetailResponse(post);
     }
 
     @Override

@@ -143,7 +143,7 @@ public class SecurityConfig{
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll().requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/login/*").permitAll()
                         .requestMatchers("/user/delete/*").permitAll()
                         .requestMatchers("/user/update/*").permitAll()

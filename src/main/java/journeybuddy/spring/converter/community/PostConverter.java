@@ -2,6 +2,7 @@ package journeybuddy.spring.converter.community;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
+import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import org.springframework.data.domain.Page;
 
@@ -18,6 +19,20 @@ public class PostConverter {
                 .userName(post.getUser().getNickname())
                 .userId(post.getUser().getId())
                 .imageUrlList(post.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+                .build();
+    }
+
+    public static PostDetailResponse toPostDetailResponse(Post post) {
+        return PostDetailResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .location(post.getLocation())
+                .writer(post.getUser().getNickname())
+                .createdAt(post.getCreatedDateTime().toString())
+                .imageUrlList(post.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+                .likeCount(post.getLikeCount())
+                .commentCount(post.getCommentCount())
                 .build();
     }
 
