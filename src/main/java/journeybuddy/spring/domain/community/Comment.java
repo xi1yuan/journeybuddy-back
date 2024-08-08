@@ -9,15 +9,12 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    private Long id;
+    private Long commentId;
 
     @Column(name = "comment")
     private String comment;
@@ -29,5 +26,12 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @Builder
+    public Comment(String comment, User user, Post post) {
+        this.comment = comment;
+        this.user = user;
+        this.post = post;
+    }
 
 }

@@ -29,18 +29,18 @@ public class PostRestController {
     private final PostCommandService postCommandService;
     private final PostRepository postRepository;
 
-    //게시글 저장(convert로직 다 service로 옮기기)
-    @PostMapping("/save")
-    @ApiOperation("게시글 저장")
-    public ApiResponse<PostRequestDTO> savePost(@RequestBody PostRequestDTO requestDTO,
-                                                Authentication authentication) {
-        Post savedPost = PostConverter.toPost(requestDTO);
-        String userEmail = authentication.getName();
-        Post savedPostSaved = postCommandService.savePost(userEmail, savedPost);
-        PostRequestDTO savedDTO = PostConverter.toPostRequestDTO(savedPostSaved);
-        log.info("게시글 저장 성공 userId = {}", userEmail);
-        return ApiResponse.onSuccess(savedDTO);
-    }
+//    //게시글 저장(convert로직 다 service로 옮기기)
+//    @PostMapping("/save")
+//    @ApiOperation("게시글 저장")
+//    public ApiResponse<PostRequestDTO> savePost(@RequestBody PostRequestDTO requestDTO,
+//                                                Authentication authentication) {
+//        Post savedPost = PostConverter.toPost(requestDTO);
+//        String userEmail = authentication.getName();
+//        Post savedPostSaved = postCommandService.savePost(userEmail, savedPost);
+//        PostRequestDTO savedDTO = PostConverter.toPostRequestDTO(savedPostSaved);
+//        log.info("게시글 저장 성공 userId = {}", userEmail);
+//        return ApiResponse.onSuccess(savedDTO);
+//    }
 
     //내가 쓴 게시글 상세조회(클릭시)
     @GetMapping("/my_post/detail")

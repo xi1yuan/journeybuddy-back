@@ -6,66 +6,67 @@ import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.domain.common.BaseEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private LocalDateTime createdDateTime;
+
+    private String location;
+
+    private int likeCount;
+
+    private int commentCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<UserLike> userLikeList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Scrap> scrapList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Image> images;
 
 
     @Builder
-    public Post(Long id, String title, String body, User user, List<Comment> comments, List<UserLike> likes) {
-        this.id = id;
+    public Post(String title, String location, String content, LocalDateTime createdDateTime, int likeCount, int commentCount, List<Image> images, User user) {
         this.title = title;
-        this.content = getContent();
-        this.user = user;
-
-    }
-
-    public Post(Long id, String title, String content, User user) {
-        this.id = id;
-        this.title = title;
+        this.location = location;
         this.content = content;
+        this.createdDateTime = createdDateTime;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+        this.images = images;
         this.user = user;
     }
 
-    public static Post of(String title, String content, User user) {
-        Post entity = new Post();
-        entity.setTitle(title);
-        entity.setContent(content);
-        entity.setUser(user);
-        return entity;
+    public void setImages(List<Image> images) {
+        this.images = images;
+        for (Image image : images) {
+            image.setPost(this);
+        }
     }
-
-
 }

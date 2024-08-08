@@ -2,9 +2,24 @@ package journeybuddy.spring.converter.community;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
+import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.stream.Collectors;
+
 public class PostConverter {
+
+    public static PostResponse toPostResponse(Post post) {
+        return PostResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .location(post.getLocation())
+                .userName(post.getUser().getNickname())
+                .userId(post.getUser().getId())
+                .imageUrlList(post.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+                .build();
+    }
 
 
         public static Post toPost(PostRequestDTO postRequestDTO) {  //Post 엔티티에 저장
@@ -30,16 +45,6 @@ public class PostConverter {
                     .id(post.getId())
                     .content(post.getContent())
                     .title(post.getTitle())
-                    .userId(post.getUser().getId())
-                    .build();
-        }
-
-
-        public static PostResponseDTO fromEntity(Post post) {
-            return PostResponseDTO.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
                     .userId(post.getUser().getId())
                     .build();
         }

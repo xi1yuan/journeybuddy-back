@@ -53,14 +53,14 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
         return optionalPost.get();
     }
-
-    @Override
-    public Post savePost(String userEmail, Post post) { //userId가 외래키
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("해당계정이 존재하지 않습니다"));
-        post.setUser(user);
-        log.info("Saving post: {}", post);
-        return postRepository.save(post);
-    }
+//
+//    @Override
+//    public Post savePost(String userEmail, Post post) { //userId가 외래키
+//        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("해당계정이 존재하지 않습니다"));
+//        post.setUser(user);
+//        log.info("Saving post: {}", post);
+//        return postRepository.save(post);
+//    }
 
     @Override
     public Post deletePost(Long postId,String authentication) {
