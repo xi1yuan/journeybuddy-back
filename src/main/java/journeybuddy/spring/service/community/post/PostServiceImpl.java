@@ -87,8 +87,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, String userEmail) {
+        User user = findMemberByEmail(userEmail);
 
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
+            log.info("게시글을 찾을 수 없음.");
+            return new IllegalArgumentException("게시글을 찾을 수 없습니다.");
+        });
+
+        // 해당 user가 작성한 게시글이 아닌 경우
+        if (!post.getUser().equals(user)) {
+            log.info("해당 게시글을 삭제할 권한이 없음.");
+            throw new IllegalArgumentException("해당 게시글을 삭제할 권한이 없습니다.");
+        }
+
+        postRepository.delete(post);
     }
 
     @Override

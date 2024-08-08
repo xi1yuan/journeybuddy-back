@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Community API", description = "커뮤니티 관련 API")
 @RestController
@@ -42,5 +43,12 @@ public class PostController {
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 API")
     public ResponseEntity<PostDetailResponse> getPostDetail(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getPostDetail(postId));
+    }
+
+    @DeleteMapping("/{postId}")
+    @Operation(summary = "게시글 삭제", description = "게시글 삭제 API")
+    public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        postService.deletePost(postId, userDetails.getUsername());
+        return ResponseEntity.ok(Map.of("message", "게시글 삭제 성공"));
     }
 }

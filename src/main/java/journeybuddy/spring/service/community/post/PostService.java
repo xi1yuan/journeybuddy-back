@@ -14,6 +14,6 @@ public interface PostService {
     PostResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail);
     PostDetailResponse getPostDetail(Long postId);
     PostResponse updatePost(Long postId, UpdatePostRequest request, String userEmail);
-    void deletePost(Long postId);
+    void deletePost(Long postId, String userEmail);
     List<PostResponse> getAllPosts();
 }
