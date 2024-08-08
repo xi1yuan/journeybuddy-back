@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface PostService {
     List<PostResponse> searchPosts(String keyword, String sortBy);
-    List<PostResponse> getTop3Posts();
+    List<PostListResponse> getTop3Posts();
     PostResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail);
     PostDetailResponse getPostDetail(Long postId);
     PostResponse updatePost(Long postId, UpdatePostRequest request, String userEmail);

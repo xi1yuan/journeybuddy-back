@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +43,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getTop3Posts() {
-        return null;
+    public List<PostListResponse> getTop3Posts() {
+        List<Post> posts = postRepository.findByOrderByLikeCountDesc(PageRequest.of(0, 3));
+
+        List<PostListResponse> postListResponses = posts.stream()
+                .map(PostConverter::toPostListResponse)
+                .collect(Collectors.toList());
+
+        return postListResponses;
     }
 
     @SneakyThrows

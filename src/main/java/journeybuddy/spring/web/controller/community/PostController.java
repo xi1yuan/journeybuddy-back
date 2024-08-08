@@ -70,4 +70,10 @@ public class PostController {
 
         return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
+
+    @GetMapping("/top3")
+    @Operation(summary = "좋아요 기준 인기 게시글 조회", description = "인기 게시글 조회 API")
+    public ResponseEntity<List<PostListResponse>> getTop3Posts() {
+        return ResponseEntity.ok(postService.getTop3Posts());
+    }
 }
