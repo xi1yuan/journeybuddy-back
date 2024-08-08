@@ -1,10 +1,12 @@
 package journeybuddy.spring.domain.community;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.domain.common.BaseEntity;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

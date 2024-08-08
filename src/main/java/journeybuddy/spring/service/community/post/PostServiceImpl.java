@@ -7,13 +7,17 @@ import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.repository.user.UserRepository;
+import journeybuddy.spring.web.dto.community.post.PageContentResponse;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -105,8 +109,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getAllPosts() {
-        return null;
+    public PageContentResponse<PostListResponse> getAllPosts(Pageable pageable) {
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        List<PostListResponse> postListResponses = posts.getContent().stream()
+                .map(PostConverter::toPostListResponse)
+                .collect(Collectors.toList());
+
+        return new PageContentResponse<>(
+                postListResponses,
+                posts.getTotalPages(),
+                posts.getTotalElements(),
+                posts.getSize()
+        );
     }
 
     private List<String> uploadImages(List<MultipartFile> images) throws IOException {

@@ -3,6 +3,7 @@ import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import org.springframework.data.domain.Page;
 
@@ -35,6 +36,22 @@ public class PostConverter {
                 .commentCount(post.getCommentCount())
                 .build();
     }
+
+    public static PostListResponse toPostListResponse(Post post) {
+        return PostListResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .writerName(post.getUser().getNickname())
+                .createdDate(post.getCreatedDateTime())
+                .likeCount(post.getLikeCount())
+                .commentCount(post.getCommentCount())
+                .location(post.getLocation())
+                .imageUrl(post.getImages().isEmpty() ? null : post.getImages().get(0).getUrl())
+                .build();
+    }
+
+
 
 
         public static Post toPost(PostRequestDTO postRequestDTO) {  //Post 엔티티에 저장

@@ -1,12 +1,18 @@
 package journeybuddy.spring.web.controller.community;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.community.post.PostService;
+import journeybuddy.spring.web.dto.community.post.PageContentResponse;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,5 +56,18 @@ public class PostController {
     public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
         postService.deletePost(postId, userDetails.getUsername());
         return ResponseEntity.ok(Map.of("message", "게시글 삭제 성공"));
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "게시글 목록 조회", description = "게시글 목록 조회 API")
+    public ResponseEntity<PageContentResponse<PostListResponse>> getAllPosts(
+            @Parameter(description = "페이지 번호 / 원하는 페이지보다 -1 값으로 요청해주세요", example = "0")
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
+            @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sort).descending());
+
+        return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
 }
