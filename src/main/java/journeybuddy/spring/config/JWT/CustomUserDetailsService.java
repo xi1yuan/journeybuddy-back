@@ -1,6 +1,6 @@
 package journeybuddy.spring.config.JWT;
-import journeybuddy.spring.domain.User;
-import journeybuddy.spring.repository.UserRepository;
+import journeybuddy.spring.domain.user.User;
+import journeybuddy.spring.repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

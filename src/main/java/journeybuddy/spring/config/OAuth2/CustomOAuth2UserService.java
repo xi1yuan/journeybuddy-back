@@ -2,9 +2,9 @@ package journeybuddy.spring.config.OAuth2;
 /*
 import io.swagger.models.auth.OAuth2Definition;
 import journeybuddy.spring.config.JWT.CustomUserDetails;
-import journeybuddy.spring.converter.UserUpdateConverter;
-import journeybuddy.spring.domain.User;
-import journeybuddy.spring.repository.UserRepository;
+import journeybuddy.spring.converter.user.UserUpdateConverter;
+import journeybuddy.spring.domain.user.User;
+import journeybuddy.spring.repository.user.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

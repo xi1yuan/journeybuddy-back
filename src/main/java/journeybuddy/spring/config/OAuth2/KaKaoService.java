@@ -4,10 +4,10 @@ import com.nimbusds.jose.shaded.gson.JsonElement;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import journeybuddy.spring.config.AppConfig;
-import journeybuddy.spring.domain.Role;
-import journeybuddy.spring.domain.User;
-import journeybuddy.spring.repository.RoleRepository;
-import journeybuddy.spring.repository.UserRepository;
+import journeybuddy.spring.domain.user.Role;
+import journeybuddy.spring.domain.user.User;
+import journeybuddy.spring.repository.user.RoleRepository;
+import journeybuddy.spring.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 

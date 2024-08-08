@@ -2,7 +2,7 @@ package journeybuddy.spring.config;
 
 import journeybuddy.spring.config.JWT.*;
 
-import journeybuddy.spring.repository.UserRepository;
+import journeybuddy.spring.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

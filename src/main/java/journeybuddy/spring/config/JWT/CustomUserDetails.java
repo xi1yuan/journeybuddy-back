@@ -1,6 +1,6 @@
 package journeybuddy.spring.config.JWT;
 
-import journeybuddy.spring.domain.User;
+import journeybuddy.spring.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
