@@ -54,7 +54,6 @@ public class KaKaoRestController {
         return ApiResponse.onSuccess(jwtToken);
     }
 
-
     @GetMapping("/kakao/info")
     public ResponseEntity<String> kakaoLoginInfo(@AuthenticationPrincipal UserDetails userDetails) throws Exception {
 

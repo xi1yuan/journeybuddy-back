@@ -7,12 +7,14 @@ import journeybuddy.spring.converter.community.PostConverter;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.service.community.post.PostCommandService;
+import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -27,18 +29,18 @@ public class PostRestController {
     private final PostCommandService postCommandService;
     private final PostRepository postRepository;
 
-//    //게시글 저장(convert로직 다 service로 옮기기)
-//    @PostMapping("/save")
-//    @ApiOperation("게시글 저장")
-//    public ApiResponse<PostRequestDTO> savePost(@RequestBody PostRequestDTO requestDTO,
-//                                                Authentication authentication) {
-//        Post savedPost = PostConverter.toPost(requestDTO);
-//        String userEmail = authentication.getName();
-//        Post savedPostSaved = postCommandService.savePost(userEmail, savedPost);
-//        PostRequestDTO savedDTO = PostConverter.toPostRequestDTO(savedPostSaved);
-//        log.info("게시글 저장 성공 userId = {}", userEmail);
-//        return ApiResponse.onSuccess(savedDTO);
-//    }
+    //게시글 저장(convert로직 다 service로 옮기기)
+    @PostMapping("/save")
+    @ApiOperation("게시글 저장")
+    public ApiResponse<PostRequestDTO> savePost(@RequestBody PostRequestDTO requestDTO,
+                                                Authentication authentication) {
+        Post savedPost = PostConverter.toPost(requestDTO);
+        String userEmail = authentication.getName();
+        Post savedPostSaved = postCommandService.savePost(userEmail, savedPost);
+        PostRequestDTO savedDTO = PostConverter.toPostRequestDTO(savedPostSaved);
+        log.info("게시글 저장 성공 userId = {}", userEmail);
+        return ApiResponse.onSuccess(savedDTO);
+    }
 
     //내가 쓴 게시글 상세조회(클릭시)
     @GetMapping("/my_post/detail")

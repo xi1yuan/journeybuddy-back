@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
+@PropertySource("classpath:config.properties")
 public class AppConfig {
     @Autowired
     private Environment env;
