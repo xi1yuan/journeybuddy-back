@@ -87,7 +87,8 @@ public class SecurityConfig{
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
         return web -> web.ignoring()
-                .requestMatchers("/error", "/favicon.ico");
+                .requestMatchers("/error", "/favicon.ico","/api-document/**",
+                        "/swagger-ui/**");
     }
 
     //다른 도메인에서 리소스에 접근할 수 있도록 웹 어플리케이션간의 리소스 공유를 허용하는 메커니즘
