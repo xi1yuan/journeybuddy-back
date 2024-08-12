@@ -7,6 +7,8 @@ import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.domain.common.BaseEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -17,7 +19,6 @@ public class Scrap extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
     @JsonIgnore // 직렬화에서 제외

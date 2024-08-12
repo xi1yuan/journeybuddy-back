@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserLikeCommandService {
-    UserLike saveLikes(String userEmail, Long postId);
+    UserLikeResponesDTO saveLikes(String userEmail, Long postId);
     Page<UserLikeResponesDTO> findMyLike(String userEmail, Pageable pageable);
+    void deleteLikes(String userEmail, Long postId);
 }

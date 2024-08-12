@@ -1,49 +1,64 @@
-package journeybuddy.spring.web.controller.community;
-
+package journeybuddy.spring.web.controller.mypage;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Tag;
 import journeybuddy.spring.apiPayload.ApiResponse;
 import journeybuddy.spring.converter.community.PostConverter;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.repository.community.PostRepository;
+import journeybuddy.spring.service.community.comment.CommentCommandService;
+import journeybuddy.spring.service.community.like.UserLikeCommandServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
-import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
+import journeybuddy.spring.service.community.scrap.ScrapCommandService;
+import journeybuddy.spring.web.dto.community.comment.CommentResponseDTO;
+import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
+import journeybuddy.spring.web.dto.community.scrap.ScrapResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-//게시글 조회기능 컨트롤러
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("my_page/posts")
-public class PostRestController {
-
-    private final PostCommandService postCommandService;
+@RequestMapping("my_page")
+public class MyPageController {
     private final PostRepository postRepository;
+    private final PostCommandService postCommandService;
+    private final CommentCommandService commentCommandService;
+    private final UserLikeCommandServiceImpl userLikeCommandServiceImpl;
+    private final ScrapCommandService scrapCommandService;
 
-//    //게시글 저장(convert로직 다 service로 옮기기)
-//    @PostMapping("/save")
-//    @ApiOperation("게시글 저장")
-//    public ApiResponse<PostRequestDTO> savePost(@RequestBody PostRequestDTO requestDTO,
-//                                                Authentication authentication) {
-//        Post savedPost = PostConverter.toPost(requestDTO);
-//        String userEmail = authentication.getName();
-//        Post savedPostSaved = postCommandService.savePost(userEmail, savedPost);
-//        PostRequestDTO savedDTO = PostConverter.toPostRequestDTO(savedPostSaved);
-//        log.info("게시글 저장 성공 userId = {}", userEmail);
-//        return ApiResponse.onSuccess(savedDTO);
-//    }
+    @GetMapping("/myLikes")
+    public ApiResponse<Page<UserLikeResponesDTO>> findMyLikes(@AuthenticationPrincipal UserDetails userDetails,
+                                                              Pageable pageable) {
+        String userEmail = userDetails.getUsername();
+        Page<UserLikeResponesDTO> likesPage = userLikeCommandServiceImpl.findMyLike(userEmail,pageable);
+        return ApiResponse.onSuccess(likesPage);
+    }
+
+    @GetMapping("/myScrap")
+    public ApiResponse<Page<ScrapResponseDTO>> getMyScrap(@AuthenticationPrincipal UserDetails userDetails,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "9") int size) {
+
+        int maxSize = 50;
+        size = Math.min(size, maxSize);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        String userEmail = userDetails.getUsername();
+        Page<ScrapResponseDTO> scrapPage = scrapCommandService.findAll(userEmail,pageable);
+        return ApiResponse.onSuccess(scrapPage);
+    }
 
     //내가 쓴 게시글 상세조회(클릭시)
-    @GetMapping("/my_post/detail")
+    @GetMapping("/posts/my_post/detail")
     @ApiOperation(value = "게시글 상세보기(클릭시)")
     public ApiResponse<?> checkMyPostDetail(@RequestParam Long postId, @AuthenticationPrincipal UserDetails userDetails) {
         if (postId != null) {
@@ -57,7 +72,7 @@ public class PostRestController {
     }
 
     //게시글 삭제
-    @DeleteMapping("/delete/{postId}")
+    @DeleteMapping("/posts/delete/{postId}")
     @ApiOperation(value = "게시글 삭제", notes = "주어진 ID의 게시글을 삭제합니다.")
     public ApiResponse<?> deletePost(@PathVariable("postId") Long postId, @AuthenticationPrincipal  UserDetails userDetails) {
         if (postId != null) {
@@ -69,7 +84,6 @@ public class PostRestController {
         }
         return null;
     }
-
 
     //페이징 처리 되어있음
     @GetMapping("/my_posts/paging")
@@ -93,7 +107,7 @@ public class PostRestController {
     @ApiOperation(value = "모든포스트페이징")
     @GetMapping("/checkAllPost")
     public ApiResponse<Page<PostResponseDTO>> getPosts(@RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "9") int size) {
+                                                       @RequestParam(defaultValue = "9") int size) {
         int maxSize = 50;
         size = Math.min(size, maxSize);
 
@@ -102,14 +116,19 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.toDtoList(posts));
     }
 
+    @GetMapping("/comment/myComment")
+    public ApiResponse <Page<CommentResponseDTO>> checkMyComment(@AuthenticationPrincipal UserDetails userDetails,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "9") int size) {
 
+        int maxSize = 50;
+        size = Math.min(size, maxSize);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        String userEmail = userDetails.getUsername();
+        log.info("나의 모든 댓글 조회");
+        Page<CommentResponseDTO> checkMyComment = commentCommandService.checkMyComment(userEmail,pageable);
+        return ApiResponse.onSuccess(checkMyComment);
+    }
 }
-
-
-
-
-
-
-
-
-

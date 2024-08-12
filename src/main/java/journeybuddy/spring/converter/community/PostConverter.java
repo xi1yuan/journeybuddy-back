@@ -1,7 +1,6 @@
 package journeybuddy.spring.converter.community;
 import journeybuddy.spring.domain.community.Image;
 import journeybuddy.spring.domain.community.Post;
-import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
 import journeybuddy.spring.web.dto.community.post.response.ImageDTO;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
@@ -26,7 +25,7 @@ public class PostConverter {
                 .content(post.getContent())
                 .location(post.getLocation())
                 .writer(post.getUser().getNickname())
-                .createdAt(post.getCreatedDateTime().toString())
+                .createdAt(post.getCreatedAt().toString())
                 .imageUrlList(post.getImages().stream()
                         .map(PostConverter::toImageDTO)
                         .collect(Collectors.toList()))
@@ -41,7 +40,7 @@ public class PostConverter {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .writerName(post.getUser().getNickname())
-                .createdDate(post.getCreatedDateTime())
+                .createdAt(post.getCreatedAt())
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .location(post.getLocation())
@@ -49,26 +48,6 @@ public class PostConverter {
                 .build();
     }
 
-
-
-
-        public static Post toPost(PostRequestDTO postRequestDTO) {  //Post 엔티티에 저장
-            return Post.builder()
-                   // .id(postRequestDTO.getId())
-                    .title(postRequestDTO.getTitle())
-                    .content(postRequestDTO.getContent())
-                    .build();
-
-        }
-
-        public static PostRequestDTO toPostRequestDTO(Post post) {  //post에서 받아옴 PostRequestDTO로
-            return PostRequestDTO.builder()
-                  //  .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .build();
-
-        }
 
         public static PostResponseDTO toPostResponseDTO(Post post) {  //post에서 받아옴 PostResponseDTO로
             return PostResponseDTO.builder()

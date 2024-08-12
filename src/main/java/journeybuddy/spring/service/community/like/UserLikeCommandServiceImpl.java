@@ -25,25 +25,45 @@ public class UserLikeCommandServiceImpl implements UserLikeCommandService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    //좋아요 누르고 저장
-    public UserLike saveLikes(String userEmail,Long postId) {
+    // 좋아요 누르기
+    @Override
+    public UserLikeResponesDTO saveLikes(String userEmail, Long postId) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 기존 UserLike가 있는지 확인
-        Optional<UserLike> optionalUserLike = userLikeRepository.findByUserAndPost(user, post);
-
-        if (optionalUserLike.isPresent()) {
-            // 기존 UserLike가 있으면 반환
-            return optionalUserLike.get();
-        } else {
-            // 기존 UserLike가 없으면 새로 생성
-            UserLike newUserLike = UserLike.builder()
-                    .user(user)
-                    .post(post)
-                    .build();
-            return userLikeRepository.save(newUserLike);
+        Optional<UserLike> userLike = userLikeRepository.findByUserAndPost(user, post);
+        if (userLike.isPresent()) {
+            log.error("이미 좋아요를 누른 게시물입니다.");
+            throw new RuntimeException("이미 좋아요를 누른 게시물입니다.");
         }
+
+        UserLike newUserLike = UserLike.builder()
+                .user(user)
+                .post(post)
+                .build();
+
+        // 좋아요 수 증가
+        post.setLikeCount(post.getLikeCount() + 1);
+        userLikeRepository.save(newUserLike);
+
+        return UserLikeConverter.toUserLikeResponesDTO(newUserLike);
+    }
+
+    // 좋아요 취소
+    @Override
+    public void deleteLikes(String userEmail, Long postId) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Optional<UserLike> userLike = userLikeRepository.findByUserAndPost(user, post);
+        if (userLike.isEmpty()) {
+            log.error("좋아요를 누르지 않은 게시물입니다.");
+            throw new RuntimeException("좋아요를 누르지 않은 게시물입니다.");
+        }
+
+        // 좋아요 수 감소
+        post.setLikeCount(post.getLikeCount() - 1);
+        userLikeRepository.delete(userLike.get());
     }
 
     //내가 누른 좋아요 확인

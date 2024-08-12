@@ -27,9 +27,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private LocalDateTime createdDateTime;
-
     private String location;
 
     private int likeCount;
@@ -54,11 +51,10 @@ public class Post extends BaseEntity {
 
 
     @Builder
-    public Post(String title, String location, String content, LocalDateTime createdDateTime, int likeCount, int commentCount, List<Image> images, User user) {
+    public Post(String title, String location, String content, int likeCount, int commentCount, List<Image> images, User user) {
         this.title = title;
         this.location = location;
         this.content = content;
-        this.createdDateTime = createdDateTime;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.images = images;
@@ -82,5 +78,9 @@ public class Post extends BaseEntity {
                 image.setPost(this);  // 새로운 이미지와 게시글 간의 관계를 설정
             }
         }
+    }
+
+    public void setLikeCount(int i) {
+        this.likeCount = i;
     }
 }

@@ -6,6 +6,8 @@ import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.domain.common.BaseEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter

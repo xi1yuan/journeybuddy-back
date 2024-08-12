@@ -70,7 +70,6 @@ public class PostServiceImpl implements PostService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .location(request.getLocation())
-                .createdDateTime(LocalDateTime.now())
                 .likeCount(0)
                 .commentCount(0)
                 .user(user)
