@@ -3,8 +3,8 @@ package journeybuddy.spring.web.controller.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import journeybuddy.spring.service.community.like.UserLikeCommandService;
-import journeybuddy.spring.service.community.like.UserLikeCommandServiceImpl;
+import journeybuddy.spring.service.community.like.UserLikeService;
+import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +22,15 @@ import java.util.Map;
 @RequestMapping("/posts/{postId}/like")
 public class UserLikeController {
 
-    private final UserLikeCommandService userLikeCommandService;
-    private final UserLikeCommandServiceImpl userLikeCommandServiceImpl;
+    private final UserLikeService userLikeService;
+    private final UserLikeServiceImpl userLikeServiceImpl;
 
     @Operation(summary = "좋아요 누르기", description = "좋아요 누르기 API")
     @PostMapping
     public ResponseEntity<UserLikeResponesDTO> saveLikes(@AuthenticationPrincipal UserDetails userDetails,
                                                          @PathVariable Long postId) {
         String userEmail = userDetails.getUsername();
-        UserLikeResponesDTO userLikeResponesDTO = userLikeCommandServiceImpl.saveLikes(userEmail, postId);
+        UserLikeResponesDTO userLikeResponesDTO = userLikeServiceImpl.saveLikes(userEmail, postId);
         return ResponseEntity.ok(userLikeResponesDTO);
     }
 
@@ -39,7 +39,7 @@ public class UserLikeController {
     public ResponseEntity<Map<String, String>> deleteLikes(@AuthenticationPrincipal UserDetails userDetails,
                                                            @PathVariable Long postId) {
         String userEmail = userDetails.getUsername();
-        userLikeCommandService.deleteLikes(userEmail, postId);
+        userLikeService.deleteLikes(userEmail, postId);
         return ResponseEntity.ok(Map.of("message", "좋아요 취소 성공"));
     }
 

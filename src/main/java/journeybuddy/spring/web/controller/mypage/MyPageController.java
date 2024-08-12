@@ -1,15 +1,14 @@
 package journeybuddy.spring.web.controller.mypage;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Tag;
 import journeybuddy.spring.apiPayload.ApiResponse;
 import journeybuddy.spring.converter.community.PostConverter;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.service.community.comment.CommentCommandService;
-import journeybuddy.spring.service.community.like.UserLikeCommandServiceImpl;
+import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
-import journeybuddy.spring.service.community.scrap.ScrapCommandService;
+import journeybuddy.spring.service.community.scrap.ScrapService;
 import journeybuddy.spring.web.dto.community.comment.CommentResponseDTO;
 import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
@@ -31,14 +30,14 @@ public class MyPageController {
     private final PostRepository postRepository;
     private final PostCommandService postCommandService;
     private final CommentCommandService commentCommandService;
-    private final UserLikeCommandServiceImpl userLikeCommandServiceImpl;
-    private final ScrapCommandService scrapCommandService;
+    private final UserLikeServiceImpl userLikeServiceImpl;
+    private final ScrapService scrapService;
 
     @GetMapping("/myLikes")
     public ApiResponse<Page<UserLikeResponesDTO>> findMyLikes(@AuthenticationPrincipal UserDetails userDetails,
                                                               Pageable pageable) {
         String userEmail = userDetails.getUsername();
-        Page<UserLikeResponesDTO> likesPage = userLikeCommandServiceImpl.findMyLike(userEmail,pageable);
+        Page<UserLikeResponesDTO> likesPage = userLikeServiceImpl.findMyLike(userEmail,pageable);
         return ApiResponse.onSuccess(likesPage);
     }
 
@@ -53,7 +52,7 @@ public class MyPageController {
         Pageable pageable = PageRequest.of(page, size);
 
         String userEmail = userDetails.getUsername();
-        Page<ScrapResponseDTO> scrapPage = scrapCommandService.findAll(userEmail,pageable);
+        Page<ScrapResponseDTO> scrapPage = scrapService.findAll(userEmail,pageable);
         return ApiResponse.onSuccess(scrapPage);
     }
 

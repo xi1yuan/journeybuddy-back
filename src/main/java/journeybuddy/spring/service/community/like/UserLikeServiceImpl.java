@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserLikeCommandServiceImpl implements UserLikeCommandService {
+public class UserLikeServiceImpl implements UserLikeService {
 
     private final UserLikeRepository userLikeRepository;
     private final UserRepository userRepository;
