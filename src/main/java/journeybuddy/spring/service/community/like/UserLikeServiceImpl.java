@@ -1,5 +1,6 @@
 package journeybuddy.spring.service.community.like;
 
+import jakarta.transaction.Transactional;
 import journeybuddy.spring.converter.community.UserLikeConverter;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.domain.user.User;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class UserLikeServiceImpl implements UserLikeService {
 

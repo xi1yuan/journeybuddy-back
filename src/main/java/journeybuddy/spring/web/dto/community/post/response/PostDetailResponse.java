@@ -18,6 +18,8 @@ public class PostDetailResponse {
     private List<ImageDTO> imageUrlList;
     private int likeCount;
     private int commentCount;
+    // 댓글 단 사람 목록 추가
+    // 댓글 page 추가
 
     @Builder
     public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount) {

@@ -5,7 +5,7 @@ import journeybuddy.spring.apiPayload.ApiResponse;
 import journeybuddy.spring.converter.community.PostConverter;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.repository.community.PostRepository;
-import journeybuddy.spring.service.community.comment.CommentCommandService;
+import journeybuddy.spring.service.community.comment.CommentService;
 import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
 import journeybuddy.spring.service.community.scrap.ScrapService;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class MyPageController {
     private final PostRepository postRepository;
     private final PostCommandService postCommandService;
-    private final CommentCommandService commentCommandService;
+    private final CommentService commentService;
     private final UserLikeServiceImpl userLikeServiceImpl;
     private final ScrapService scrapService;
 
@@ -127,7 +127,7 @@ public class MyPageController {
 
         String userEmail = userDetails.getUsername();
         log.info("나의 모든 댓글 조회");
-        Page<CommentResponseDTO> checkMyComment = commentCommandService.checkMyComment(userEmail,pageable);
+        Page<CommentResponseDTO> checkMyComment = commentService.checkMyComment(userEmail,pageable);
         return ApiResponse.onSuccess(checkMyComment);
     }
 }

@@ -83,4 +83,8 @@ public class Post extends BaseEntity {
     public void setLikeCount(int i) {
         this.likeCount = i;
     }
+
+    public void setCommentCount(int i) {
+        this.commentCount = i;
+    }
 }

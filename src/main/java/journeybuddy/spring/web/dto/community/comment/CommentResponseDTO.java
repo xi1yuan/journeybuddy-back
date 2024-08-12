@@ -12,8 +12,7 @@ import lombok.ToString;
 public class CommentResponseDTO {
     private Long id;
     private String comment;
-    private Long userId; //알람 동작 시킨 user
+    private Long userId;
     private Long postId;
     private String createdAt;
-    private String updatedAt;
 }

@@ -14,6 +14,7 @@ public class CommentConverter {
                 .comment(comment.getComment())
                 .userId(comment.getUser().getId())
                 .postId(comment.getPost().getId())
+                .createdAt(comment.getCreatedAt().toString())
                 .build();
     }
 
