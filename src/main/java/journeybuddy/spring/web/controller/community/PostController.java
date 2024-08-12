@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.community.post.PostService;
 import journeybuddy.spring.web.dto.community.post.PageContentResponse;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
+import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
-import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class PostController {
 
     @PostMapping(value="/save", consumes = {"multipart/form-data"})
     @Operation(summary = "게시글 작성", description = "게시글 작성 API")
-    public ResponseEntity<PostResponse> savePost(
+    public ResponseEntity<PostDetailResponse> savePost(
             @RequestPart("request") CreatePostRequest request,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
@@ -76,4 +76,17 @@ public class PostController {
     public ResponseEntity<List<PostListResponse>> getTop3Posts() {
         return ResponseEntity.ok(postService.getTop3Posts());
     }
+
+    @PutMapping("/{postId}")
+    @Operation(summary = "게시글 수정", description = "게시글 수정 API")
+    public ResponseEntity<PostDetailResponse> updatePost(
+            @PathVariable Long postId,
+            @Parameter(description = "게시글 수정 요청 정보", example = "{'title':'수정된 제목', 'content':'수정된 내용', 'location':'수정된 위치', 'deletedImageIds':[1, 2]}")
+            @RequestPart("request") UpdatePostRequest request,
+            @Parameter(description = "게시글 수정 이미지 리스트", example = "image.jpg")
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(postService.updatePost(postId, request, images, userDetails.getUsername()));
+    }
+
 }

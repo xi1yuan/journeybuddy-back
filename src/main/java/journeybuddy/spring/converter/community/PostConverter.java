@@ -1,25 +1,21 @@
 package journeybuddy.spring.converter.community;
+import journeybuddy.spring.domain.community.Image;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.web.dto.community.post.PostRequestDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
+import journeybuddy.spring.web.dto.community.post.response.ImageDTO;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
-import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.stream.Collectors;
 
 public class PostConverter {
 
-    public static PostResponse toPostResponse(Post post) {
-        return PostResponse.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .location(post.getLocation())
-                .userName(post.getUser().getNickname())
-                .userId(post.getUser().getId())
-                .imageUrlList(post.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+    private static ImageDTO toImageDTO(Image image) {
+        return ImageDTO.builder()
+                .id(image.getId())
+                .url(image.getUrl())
                 .build();
     }
 
@@ -31,7 +27,9 @@ public class PostConverter {
                 .location(post.getLocation())
                 .writer(post.getUser().getNickname())
                 .createdAt(post.getCreatedDateTime().toString())
-                .imageUrlList(post.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+                .imageUrlList(post.getImages().stream()
+                        .map(PostConverter::toImageDTO)
+                        .collect(Collectors.toList()))
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .build();

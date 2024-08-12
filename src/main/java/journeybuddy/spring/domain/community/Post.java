@@ -71,4 +71,16 @@ public class Post extends BaseEntity {
             image.setPost(this);
         }
     }
+
+    public void update(String title, String content, String location, List<Image> imageEntities) {
+        this.title = title;
+        this.content = content;
+        this.location = location;
+        if (imageEntities != null && !imageEntities.isEmpty()) {
+            this.images.addAll(imageEntities);  // 기존 이미지에 새로운 이미지들을 추가
+            for (Image image : imageEntities) {
+                image.setPost(this);  // 새로운 이미지와 게시글 간의 관계를 설정
+            }
+        }
+    }
 }

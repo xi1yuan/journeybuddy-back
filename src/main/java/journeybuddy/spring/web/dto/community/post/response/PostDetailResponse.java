@@ -15,12 +15,12 @@ public class PostDetailResponse {
     private String location;
     private String writer;
     private String createdAt;
-    private List<String> imageUrlList;
+    private List<ImageDTO> imageUrlList;
     private int likeCount;
     private int commentCount;
 
     @Builder
-    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<String> imageUrlList, int likeCount, int commentCount) {
+    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount) {
         this.postId = postId;
         this.title = title;
         this.content = content;
