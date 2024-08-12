@@ -18,11 +18,11 @@ public class PostDetailResponse {
     private List<ImageDTO> imageUrlList;
     private int likeCount;
     private int commentCount;
-    // 댓글 단 사람 목록 추가
+    private List<CommentWriterDTO> commentWriterList;
     // 댓글 page 추가
 
     @Builder
-    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount) {
+    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount, List<CommentWriterDTO> commentWriterList) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -32,5 +32,6 @@ public class PostDetailResponse {
         this.imageUrlList = imageUrlList;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
+        this.commentWriterList = commentWriterList;
     }
 }
