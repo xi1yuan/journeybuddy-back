@@ -16,4 +16,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByUser(User user, Pageable pageable);
 
     List<Post> findByOrderByLikeCountDesc(PageRequest of);
+
+    List<Post> findByLocationEquals(String location, Pageable pageable);
 }

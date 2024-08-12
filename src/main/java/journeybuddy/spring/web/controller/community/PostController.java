@@ -89,4 +89,18 @@ public class PostController {
         return ResponseEntity.ok(postService.updatePost(postId, request, images, userDetails.getUsername()));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "게시글 검색", description = "게시글 검색 API")
+    public ResponseEntity<List<PostListResponse>> searchPosts(
+            @Parameter(description = "검색어", example = "여행")
+            @RequestParam(value = "location", defaultValue = "") String location,
+            @Parameter(description = "페이지 번호 / 원하는 페이지보다 -1 값으로 요청해주세요", example = "0")
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
+            @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sort).descending());
+        return ResponseEntity.ok(postService.searchPosts(location, sort, pageable));
+    }
+
 }

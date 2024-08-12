@@ -39,8 +39,14 @@ public class PostServiceImpl implements PostService {
     private final ImageRepository imageRepository;
 
     @Override
-    public List<PostListResponse> searchPosts(String keyword, String sortBy) {
-        return null;
+    public List<PostListResponse> searchPosts(String location, String sortBy, Pageable pageable) {
+        List<Post> posts = postRepository.findByLocationEquals(location, pageable);
+
+        List<PostListResponse> postListResponses = posts.stream()
+                .map(PostConverter::toPostListResponse)
+                .collect(Collectors.toList());
+
+        return postListResponses;
     }
 
     @Override

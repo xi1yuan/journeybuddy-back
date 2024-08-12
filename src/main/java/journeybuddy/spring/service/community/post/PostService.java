@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface PostService {
-    List<PostListResponse> searchPosts(String keyword, String sortBy);
+    List<PostListResponse> searchPosts(String keyword, String sortBy, Pageable pageable);
     List<PostListResponse> getTop3Posts();
     PostDetailResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail);
     PostDetailResponse getPostDetail(Long postId);
