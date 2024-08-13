@@ -2,9 +2,11 @@ package journeybuddy.spring.service.community.post;
 
 import jakarta.transaction.Transactional;
 import journeybuddy.spring.converter.community.PostConverter;
+import journeybuddy.spring.domain.community.Comment;
 import journeybuddy.spring.domain.community.Image;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.domain.user.User;
+import journeybuddy.spring.repository.community.CommentRepository;
 import journeybuddy.spring.repository.community.ImageRepository;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.repository.user.UserRepository;
@@ -13,12 +15,14 @@ import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +41,7 @@ public class PostServiceImpl implements PostService {
     private final S3ImageService s3ImageService;
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<PostListResponse> searchPosts(String location, String sortBy, Pageable pageable) {
@@ -62,7 +67,7 @@ public class PostServiceImpl implements PostService {
 
     @SneakyThrows
     @Override
-    public PostDetailResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail){
+    public PostResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail){
         List<String> imageUrls = uploadImages(images);
         User user = findMemberByEmail(userEmail);
 
@@ -82,19 +87,20 @@ public class PostServiceImpl implements PostService {
         post.setImages(imageEntities);
         Post savedPost = postRepository.save(post);
 
-        return PostConverter.toPostDetailResponse(savedPost);
+        return PostConverter.toPostResponse(savedPost);
     }
 
     @Override
-    public PostDetailResponse getPostDetail(Long postId) {
+    public PostDetailResponse getPostDetail(Long postId, Pageable pageable) {
         Post post = getPost(postId);
+        Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
 
-        return PostConverter.toPostDetailResponse(post);
+        return PostConverter.toPostDetailResponse(post, commentList);
     }
 
     @SneakyThrows
     @Override
-    public PostDetailResponse updatePost(Long postId, UpdatePostRequest request, List<MultipartFile> images, String userEmail) {
+    public PostResponse updatePost(Long postId, UpdatePostRequest request, List<MultipartFile> images, String userEmail) {
         User user = findMemberByEmail(userEmail);
         Post post = getPost(postId);
 
@@ -122,7 +128,7 @@ public class PostServiceImpl implements PostService {
         // 수정된 게시글 저장
         Post newPost = postRepository.save(post);
 
-        return PostConverter.toPostDetailResponse(newPost);
+        return PostConverter.toPostResponse(newPost);
     }
 
     private void deleteImage(UpdatePostRequest request, Post post) {

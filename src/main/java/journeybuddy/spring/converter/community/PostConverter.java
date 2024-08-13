@@ -1,11 +1,9 @@
 package journeybuddy.spring.converter.community;
+import journeybuddy.spring.domain.community.Comment;
 import journeybuddy.spring.domain.community.Image;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
-import journeybuddy.spring.web.dto.community.post.response.CommentWriterDTO;
-import journeybuddy.spring.web.dto.community.post.response.ImageDTO;
-import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
-import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
+import journeybuddy.spring.web.dto.community.post.response.*;
 import org.springframework.data.domain.Page;
 
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostDetailResponse toPostDetailResponse(Post post) {
+    public static PostDetailResponse toPostDetailResponse(Post post, Page<Comment> commentPage) {
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
@@ -32,16 +30,17 @@ public class PostConverter {
                         .collect(Collectors.toList()))
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
-                .commentWriterList(post.getCommentList().stream()
-                        .collect(Collectors.toMap(
-                                comment -> comment.getUser().getNickname(),
-                                comment -> CommentWriterDTO.builder()
-                                        .userId(comment.getUser().getId())
-                                        .nickname(comment.getUser().getNickname())
-                                        .build(),
-                                (existing, replacement) -> existing))
-                        .values().stream()
+                .commentList(commentPage.getContent().stream()
+                        .map(comment -> CommentDTO.builder()
+                                .commentId(comment.getCommentId())
+                                .content(comment.getComment())
+                                .userId(comment.getUser().getId())
+                                .nickname(comment.getUser().getNickname())
+                                .createdAt(comment.getCreatedAt().toString())
+                                .build())
                         .collect(Collectors.toList()))
+                .totalPages(commentPage.getTotalPages())
+                .totalComments(commentPage.getTotalElements())
                 .build();
     }
 
@@ -56,6 +55,20 @@ public class PostConverter {
                 .commentCount(post.getCommentCount())
                 .location(post.getLocation())
                 .imageUrl(post.getImages().isEmpty() ? null : post.getImages().get(0).getUrl())
+                .build();
+    }
+
+    public static PostResponse toPostResponse(Post post) {
+        return PostResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .location(post.getLocation())
+                .userId(post.getUser().getId())
+                .userName(post.getUser().getNickname())
+                .imageUrlList(post.getImages().stream()
+                        .map(Image::getUrl)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

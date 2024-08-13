@@ -9,6 +9,7 @@ import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class PostController {
 
     @PostMapping(value="/save", consumes = {"multipart/form-data"})
     @Operation(summary = "게시글 작성", description = "게시글 작성 API")
-    public ResponseEntity<PostDetailResponse> savePost(
+    public ResponseEntity<PostResponse> savePost(
             @RequestPart("request") CreatePostRequest request,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
@@ -47,8 +48,11 @@ public class PostController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 API")
-    public ResponseEntity<PostDetailResponse> getPostDetail(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getPostDetail(postId));
+    public ResponseEntity<PostDetailResponse> getPostDetail(
+            @PathVariable Long postId,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(postService.getPostDetail(postId, pageable));
     }
 
     @DeleteMapping("/{postId}")
@@ -79,7 +83,7 @@ public class PostController {
 
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "게시글 수정 API")
-    public ResponseEntity<PostDetailResponse> updatePost(
+    public ResponseEntity<PostResponse> updatePost(
             @PathVariable Long postId,
             @Parameter(description = "게시글 수정 요청 정보", example = "{'title':'수정된 제목', 'content':'수정된 내용', 'location':'수정된 위치', 'deletedImageIds':[1, 2]}")
             @RequestPart("request") UpdatePostRequest request,

@@ -19,10 +19,12 @@ public class PostDetailResponse {
     private int likeCount;
     private int commentCount;
     private List<CommentWriterDTO> commentWriterList;
-    // 댓글 page 추가
+    private List<CommentDTO> commentList;
+    private int totalPages;
+    private long totalComments;
 
     @Builder
-    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount, List<CommentWriterDTO> commentWriterList) {
+    public PostDetailResponse(Long postId, String title, String content, String location, String writer, String createdAt, List<ImageDTO> imageUrlList, int likeCount, int commentCount, List<CommentWriterDTO> commentWriterList, List<CommentDTO> commentList, int totalPages, long totalComments) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -33,5 +35,8 @@ public class PostDetailResponse {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.commentWriterList = commentWriterList;
+        this.commentList = commentList;
+        this.totalPages = totalPages;
+        this.totalComments = totalComments;
     }
 }
