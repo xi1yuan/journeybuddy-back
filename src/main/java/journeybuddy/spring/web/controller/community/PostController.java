@@ -67,8 +67,8 @@ public class PostController {
     public ResponseEntity<PageContentResponse<PostListResponse>> getAllPosts(
             @Parameter(description = "페이지 번호 / 원하는 페이지보다 -1 값으로 요청해주세요", example = "0")
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
-            @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
+            @Parameter(description = "정렬 기준 / \"createdAt\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort) {
 
         Pageable pageable = PageRequest.of(page, 12, Sort.by(sort).descending());
 
@@ -100,8 +100,8 @@ public class PostController {
             @RequestParam(value = "location", defaultValue = "") String location,
             @Parameter(description = "페이지 번호 / 원하는 페이지보다 -1 값으로 요청해주세요", example = "0")
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
-            @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
+            @Parameter(description = "정렬 기준 / \"createdAt\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort) {
 
         Pageable pageable = PageRequest.of(page, 12, Sort.by(sort).descending());
         return ResponseEntity.ok(postService.searchPosts(location, sort, pageable));
