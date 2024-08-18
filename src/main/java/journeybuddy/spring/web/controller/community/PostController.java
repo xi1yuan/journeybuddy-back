@@ -70,7 +70,7 @@ public class PostController {
             @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
             @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sort).descending());
+        Pageable pageable = PageRequest.of(page, 12, Sort.by(sort).descending());
 
         return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
@@ -103,7 +103,7 @@ public class PostController {
             @Parameter(description = "정렬 기준 / \"createdDateTime\" , \"likeCount\" 둘 중 하나로 요청해주세요 ", example = "createdDateTime")
             @RequestParam(value = "sort", defaultValue = "createdDateTime") String sort) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sort).descending());
+        Pageable pageable = PageRequest.of(page, 12, Sort.by(sort).descending());
         return ResponseEntity.ok(postService.searchPosts(location, sort, pageable));
     }
 
