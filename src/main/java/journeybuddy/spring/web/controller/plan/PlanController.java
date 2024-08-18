@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.plan.create.MapService;
 import journeybuddy.spring.service.plan.create.TourApiService;
-import journeybuddy.spring.web.dto.plan.response.CityResponse;
-import journeybuddy.spring.web.dto.plan.response.CoordinateResponse;
-import journeybuddy.spring.web.dto.plan.response.ProvinceResponse;
-import journeybuddy.spring.web.dto.plan.response.TourInfoResponse;
+import journeybuddy.spring.web.dto.plan.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -47,13 +44,18 @@ public class PlanController {
         return ResponseEntity.ok(tourInfoResponse);
     }
 
-    @GetMapping("/coordinate")
-    @Operation(summary = "지도 좌표 조회", description = "특정 장소의 위도, 경도 조회 API")
-    public ResponseEntity<CoordinateResponse> getCoordinates(@RequestParam String address) {
-        CoordinateResponse coordinateResponse = mapService.getCoordinate(address);
-        return ResponseEntity.ok(coordinateResponse);
+    @GetMapping("/search")
+    @Operation(summary = "키워드로 장소 검색", description = "장소 검색 API / 장소 직접 추가시 사용")
+    public ResponseEntity<List<PlaceResponse>> getPlace(@RequestParam String keyword) {
+        List<PlaceResponse> placeResponse = mapService.getPlace(keyword);
+        return ResponseEntity.ok(placeResponse);
     }
 
-
+    @GetMapping("/place-info")
+    @Operation(summary = "장소 정보 조회", description = "주소로 특정 장소의 정보 조회 API / 정보는 장소명, 주소, 장소 URL, 위도, 경도를 포함합니다.")
+    public ResponseEntity<PlaceResponse> getPlaceInfo(@RequestParam String address) {
+        PlaceResponse placeInfoResponse = mapService.getPlaceInfo(address);
+        return ResponseEntity.ok(placeInfoResponse);
+    }
 
 }
