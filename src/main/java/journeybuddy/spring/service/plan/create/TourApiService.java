@@ -2,11 +2,12 @@ package journeybuddy.spring.service.plan.create;
 
 import journeybuddy.spring.web.dto.plan.response.CityResponse;
 import journeybuddy.spring.web.dto.plan.response.ProvinceResponse;
+import journeybuddy.spring.web.dto.plan.response.TourInfoResponse;
 
 import java.util.List;
 
-public interface TravelApiService {
+public interface TourApiService {
     List<ProvinceResponse> getProvinces();
     List<CityResponse> getCities(String provinceCode);
-//    List<TourInfoResponse> getTourInfo(TourInfoRequest request);
+    TourInfoResponse getTourInfo(String areaCode, String sigunguCode, String preference);
 }
