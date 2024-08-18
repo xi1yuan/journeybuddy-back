@@ -34,8 +34,6 @@ public class Plan extends BaseEntity {
     @Column(nullable = false)
     private String transport;
 
-    @Column
-    private String preference;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Schedule> schedules;
@@ -51,4 +49,15 @@ public class Plan extends BaseEntity {
     @OneToOne(mappedBy = "plan")
     private Random random;
 
+    @Builder
+    public Plan(String name, LocalDate startDate, LocalDate endDate, String transport, List<Schedule> schedules, List<Vote> vote, User user, Random random) {
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.transport = transport;
+        this.schedules = schedules;
+        this.vote = vote;
+        this.user = user;
+        this.random = random;
+    }
 }

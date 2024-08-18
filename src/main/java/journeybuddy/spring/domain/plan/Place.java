@@ -27,4 +27,12 @@ public class Place { //원하는 장소 직접입력
     @Column(nullable = false)
     private double longitude;
 
+    @Builder
+    public Place(String address, String name, double latitude, double longitude) {
+        this.address = address;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 }

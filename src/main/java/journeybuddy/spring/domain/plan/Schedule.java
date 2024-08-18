@@ -28,4 +28,7 @@ public class Schedule {
     @Column(name="date_time", nullable = false)
     private LocalDateTime dateTime;
 
+    @Column(name="transport", nullable = false)
+    private String transport;
+
 }

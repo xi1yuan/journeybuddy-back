@@ -5,14 +5,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.plan.create.MapService;
 import journeybuddy.spring.service.plan.create.PlanService;
 import journeybuddy.spring.service.plan.create.TourApiService;
+import journeybuddy.spring.web.dto.plan.request.SavePlanRequest;
 import journeybuddy.spring.web.dto.plan.request.TravelPlanRequest;
 import journeybuddy.spring.web.dto.plan.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Travel Plan API", description = "여행 계획 생성 관련 API")
 @Slf4j
@@ -68,5 +72,11 @@ public class PlanController {
         return ResponseEntity.ok(travelPlanResponse);
     }
 
+    @PostMapping("/save")
+    @Operation(summary = "여행 계획 저장", description = "여행 계획 저장 API / 생성된 여행 계획을 저장합니다.")
+    public ResponseEntity<Map<String, Long>> savePlan(@RequestBody SavePlanRequest savePlanRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        Long planId = planService.savePlan(savePlanRequest, userDetails.getUsername());
+        return ResponseEntity.ok(Map.of("planId", planId));
+    }
 
 }
