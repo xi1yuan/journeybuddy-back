@@ -8,6 +8,7 @@ import journeybuddy.spring.domain.plan.Plan;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class Vote extends BaseEntity {
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,8 +50,6 @@ public class Vote extends BaseEntity {
     //voteOption은 한 vote에 여러개가 존재함
     @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL)
     private List<VoteOption> votePlaceList = new ArrayList<>();
-
-
 
 
 }

@@ -48,5 +48,7 @@ public class Plan extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToOne(mappedBy = "plan")
+    private Random random;
 
 }

@@ -18,11 +18,8 @@ public class UserResponseDTO {
         String email;
         String bio;
         String password;
+        String profile_img;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-
     }
-
-
-
 }

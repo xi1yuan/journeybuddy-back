@@ -108,12 +108,16 @@ public class KaKaoService {
         JsonObject kakaoAccount = jsonObject.has("kakao_account") ? jsonObject.getAsJsonObject("kakao_account") : new JsonObject();
 
         String thumbnailImage = properties.has("thumbnail_image") ? properties.get("thumbnail_image").getAsString() : null;
+        String profileImage = properties.has("profile_image") ? properties.get("profile_image").getAsString() : null;
         String nickname = properties.has("nickname") ? properties.get("nickname").getAsString() : null;
         String email = kakaoAccount.has("email") ? kakaoAccount.get("email").getAsString() : null;
         String birthday = kakaoAccount.has("birthday") ? kakaoAccount.get("birthday").getAsString() : null;
 
         log.info("nickname:{}",nickname);
+        log.info("birthday:{}",birthday);
+        log.info("profileImage:{}",profileImage);
         log.info("email:{}",email);
+        log.info("사용자썸네일프로필사진:{}",thumbnailImage);
 
         
         // DB에서 사용자 조회 및 저장
@@ -131,6 +135,7 @@ public class KaKaoService {
                     .orElseThrow(() -> new RuntimeException("Default role not found"));
 
             user = User.builder()
+                    .profile_image(profileImage)
                     .nickname(nickname)
                     .email(email)
                     .roles(Collections.singletonList(defaultRole))
@@ -138,6 +143,9 @@ public class KaKaoService {
             userRepository.save(user);
         } else {
             user = existingUser.get();
+            user.setProfile_image(profileImage);
+            user.setNickname(nickname);
+            userRepository.save(user);  // 업데이트된 정보 저장
         }
         return user;
     }

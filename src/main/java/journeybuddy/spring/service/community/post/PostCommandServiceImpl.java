@@ -6,6 +6,7 @@ import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.repository.user.UserRepository;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
+import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -80,11 +81,11 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public List<PostResponseDTO> getPosts(Pageable pageable) {
+    public List<PostListResponse> getPosts(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
         //stream을 이용해서 엔티티를 응답객체로 변경
-        List<PostResponseDTO> postResponseDTOS = posts.stream()
-                .map(PostConverter::toPostResponseDTO)
+        List<PostListResponse> postResponseDTOS = posts.stream()
+                .map(PostConverter::toPostListResponse)
                 .collect(Collectors.toList());
         return postResponseDTOS;
     }
@@ -95,13 +96,13 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostResponseDTO> getMyPeed(String userName, Pageable pageable) {
+    public Page<PostListResponse> getMyPeed(String userName, Pageable pageable) {
         User user = userRepository.findByEmail(userName).orElseThrow(()->{
             return new UsernameNotFoundException("User not found with email: " + userName);
         });
 
         Page<Post> postsByUser = postRepository.findAllByUser(user, pageable);
-        return postsByUser.map(PostConverter::toPostResponseDTO);
+        return postsByUser.map(PostConverter::toPostListResponse);
 
     }
 

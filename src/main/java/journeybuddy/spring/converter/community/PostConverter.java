@@ -17,6 +17,8 @@ public class PostConverter {
                 .build();
     }
 
+
+    //게시글 상세보기
     public static PostDetailResponse toPostDetailResponse(Post post, Page<Comment> commentPage) {
         return PostDetailResponse.builder()
                 .postId(post.getId())
@@ -44,6 +46,7 @@ public class PostConverter {
                 .build();
     }
 
+    //게시글 목록보기
     public static PostListResponse toPostListResponse(Post post) {
         return PostListResponse.builder()
                 .postId(post.getId())

@@ -6,14 +6,19 @@ import journeybuddy.spring.domain.user.Role;
 import journeybuddy.spring.domain.user.User;
 import journeybuddy.spring.repository.user.RoleRepository;
 import journeybuddy.spring.repository.user.UserRepository;
+import journeybuddy.spring.service.community.post.S3ImageService;
 import journeybuddy.spring.web.dto.user.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static journeybuddy.spring.apiPayload.code.status.ErrorStatus.MEMBER_NOT_FOUND;
 
@@ -25,6 +30,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
+    private final S3ImageService s3ImageService;
 
     @Override
     public User addUser(UserRequestDTO.RegisterDTO request) {
@@ -54,19 +60,31 @@ public class UserCommandServiceImpl implements UserCommandService {
 
 
     @Override
-    public User updateUser(UserRequestDTO.UpdateDTO request,String userEmail) {
-
+    public User updateUser(UserRequestDTO.UpdateDTO request, MultipartFile profileImage, String userEmail) {
         User existingUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new TempHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // 프로필 이미지가 업로드된 경우
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                // 이미지 업로드 후 URL 반환
+                String imageUrl = uploadImage(profileImage);
+                existingUser.setProfile_image(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Profile image upload failed", e);
+            }
+        } else if (request.getProfile_image() != null && !request.getProfile_image().isEmpty()) {
+            // 기존 URL이 있는 경우 URL을 설정
+            existingUser.setProfile_image(request.getProfile_image());
+        }
 
-    //    existingUser.setNickname(request.getNickname());
+        // 기타 필드 업데이트
         existingUser.setBio(request.getBio());
-        existingUser.setUpdatedAt(request.getUpdatedAt());
+    //    existingUser.setNickname(request.getNickname());
+        // existingUser.setUpdatedAt(LocalDateTime.now()); // 필요시 업데이트 시간 설정
 
         return userRepository.save(existingUser);
     }
-
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
@@ -109,6 +127,20 @@ public class UserCommandServiceImpl implements UserCommandService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new TempHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
+
+
+    public String uploadImage(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Image file cannot be null or empty");
+        }
+        try {
+            // 이미지 파일을 S3에 업로드하고 URL을 반환받습니다.
+            return s3ImageService.upload(image, "profile-images");
+        } catch (IOException e) {
+            throw new IOException("Failed to upload image: " + image.getOriginalFilename(), e);
+        }
+    }
+
 
 
 }

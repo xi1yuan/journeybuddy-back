@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class KaKaoRestController {
 
 
     @RequestMapping(value = "/kakao")
-    public ApiResponse<String> kakaoLogin(@RequestParam("code") String code) throws Exception {
+    public ResponseEntity<Map<String,Object>> kakaoLogin(@RequestParam("code") String code) throws Exception {
 
         String accessToken = kakaoService.getToken(code);
         User userInfo = kakaoService.getUserInfo(accessToken);
@@ -45,13 +48,18 @@ public class KaKaoRestController {
         // User 객체를 JSON 문자열로 변환
         String userInfoJson = objectMapper.writeValueAsString(userInfo);
 
+        log.info("accessToken:{}",accessToken);
         log.info("code: {}", code);
         log.info("로그인된 사용자 이메일: {}", userInfo.getEmail());
         log.info("jwtToken: {}", jwtToken);
         log.info("UserInfo JSON: {}", userInfoJson);
 
+        Map<String,Object> jwtAndInfo = new HashMap<>();
+        jwtAndInfo.put("userInfo",userInfo);
+        jwtAndInfo.put("jwt",jwtToken);
+
         // JWT 토큰을 반환
-        return ApiResponse.onSuccess(jwtToken);
+        return ResponseEntity.ok(jwtAndInfo);
     }
 
     @GetMapping("/kakao/info")

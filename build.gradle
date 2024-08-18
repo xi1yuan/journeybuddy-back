@@ -58,6 +58,7 @@ dependencies {
 
 	// s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
 	// 파일 업로드
 	implementation 'commons-io:commons-io:2.6'

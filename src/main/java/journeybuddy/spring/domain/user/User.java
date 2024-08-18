@@ -39,6 +39,10 @@ public class User extends BaseEntity{
     @NotNull(message = "Password must not be null")
     private String password;
 
+
+    @Column(name = "profile_image", nullable = true)
+    private String profile_image;
+
     @JsonIgnore
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

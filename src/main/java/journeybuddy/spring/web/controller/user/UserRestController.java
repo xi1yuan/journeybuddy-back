@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,11 +60,23 @@ public class UserRestController {
         }
     }
 */
-    @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UserRequestDTO.UpdateDTO request,@AuthenticationPrincipal UserDetails userDetails){
+    @PutMapping(value = "/update", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateUser(
+            @RequestPart(required = false) String bio,
+    //        @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) MultipartFile profileImage,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
         String userEmail = userDetails.getUsername();
-        userCommandService.updateUser(request,userEmail);
-        log.info("회원업데이트 완료");
+
+        UserRequestDTO.UpdateDTO request = new UserRequestDTO.UpdateDTO();
+        request.setBio(bio);
+    //    request.setNickname(nickname);
+
+        // 서비스 호출
+        userCommandService.updateUser(request, profileImage, userEmail);
+
+        log.info("회원 업데이트 완료");
         return ResponseEntity.ok().build();
     }
 

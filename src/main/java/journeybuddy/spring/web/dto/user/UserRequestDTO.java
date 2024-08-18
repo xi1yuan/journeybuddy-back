@@ -15,10 +15,11 @@ public class UserRequestDTO {
     @NoArgsConstructor
     public static class UpdateDTO {
         String bio;
+        String profile_image;
 //        String email;
 //        String nickname;
 //        String password;
-        LocalDateTime updatedAt;
+//        LocalDateTime updatedAt;
 
 
     }
