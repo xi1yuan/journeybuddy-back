@@ -1,6 +1,5 @@
 package journeybuddy.spring.service.plan.create;
 
-import journeybuddy.spring.web.dto.plan.response.CoordinateResponse;
 import journeybuddy.spring.web.dto.plan.response.PlaceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

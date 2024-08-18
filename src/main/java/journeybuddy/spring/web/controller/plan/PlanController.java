@@ -3,7 +3,9 @@ package journeybuddy.spring.web.controller.plan;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.plan.create.MapService;
+import journeybuddy.spring.service.plan.create.PlanService;
 import journeybuddy.spring.service.plan.create.TourApiService;
+import journeybuddy.spring.web.dto.plan.request.TravelPlanRequest;
 import journeybuddy.spring.web.dto.plan.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PlanController {
     private final TourApiService tourApiService;
     private final MapService mapService;
+    private final PlanService planService;
 
     @GetMapping("/provinces")
     @Operation(summary = "특별시/도 코드, 이름 조회", description = "특별시/도 코드, 이름을 조회하는 API")
@@ -57,5 +60,13 @@ public class PlanController {
         PlaceResponse placeInfoResponse = mapService.getPlaceInfo(address);
         return ResponseEntity.ok(placeInfoResponse);
     }
+
+    @PostMapping("/start-ai")
+    @Operation(summary = "AI 여행 계획 생성", description = "AI를 활용한 여행 계획 생성 API / 선택된 장소들, 여행 일정 시작, 끝 날짜, 교통수단을 받아오면 해당 정보로 여행 계획 생성")
+    public ResponseEntity<TravelPlanResponse> startAI(@RequestBody TravelPlanRequest travelPlanRequest) {
+        TravelPlanResponse travelPlanResponse = planService.createPlan(travelPlanRequest);
+        return ResponseEntity.ok(travelPlanResponse);
+    }
+
 
 }
