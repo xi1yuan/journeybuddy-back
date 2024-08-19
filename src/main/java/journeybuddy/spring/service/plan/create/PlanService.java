@@ -7,4 +7,5 @@ import journeybuddy.spring.web.dto.plan.response.TravelPlanResponse;
 public interface PlanService {
     Long savePlan(SavePlanRequest savePlanRequest, String userEmail);
     TravelPlanResponse createPlan(TravelPlanRequest travelPlanRequest);
+    void deletePlan(Long planId, String userEmail);
 }

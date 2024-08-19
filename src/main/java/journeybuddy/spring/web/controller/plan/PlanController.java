@@ -79,4 +79,11 @@ public class PlanController {
         return ResponseEntity.ok(Map.of("planId", planId));
     }
 
+    @DeleteMapping("/{planId}")
+    @Operation(summary = "여행 계획 삭제", description = "여행 계획 삭제 API / 저장된 여행 계획을 삭제합니다.")
+    public ResponseEntity<Map<String, String>> deletePlan(@PathVariable Long planId, @AuthenticationPrincipal UserDetails userDetails) {
+        planService.deletePlan(planId, userDetails.getUsername());
+        return ResponseEntity.ok(Map.of("message", "여행 계획 삭제 성공"));
+    }
+
 }

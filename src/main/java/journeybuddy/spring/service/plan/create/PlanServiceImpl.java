@@ -52,6 +52,20 @@ public class PlanServiceImpl implements PlanService {
         return plan.getPlanId();
     }
 
+    // 여행 계획 삭제
+    @Transactional
+    public void deletePlan(Long planId, String userEmail) {
+        // 해당 유저가 생성한 계획이 아니면 오류 발생
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("User not found: " + userEmail));
+        if(!planRepository.existsByPlanIdAndUser(planId, user)) {
+            throw new IllegalArgumentException("해당 user의 계획이 아닙니다: " + planId);
+        }
+
+
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
+        planRepository.delete(plan);
+    }
+
     private String buildPrompt(TravelPlanRequest travelPlanRequest) {
         List<PlaceDTO> selectedPlaces = travelPlanRequest.getSelectedPlaces();
         StringBuilder prompt = new StringBuilder();
