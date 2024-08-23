@@ -14,7 +14,7 @@ public class PlaceResponse {
     private String latitude;
 
     @Builder
-    public PlaceResponse(String address, String url, String tel, String name, String longitude, String latitude) {
+    public PlaceResponse(String address, String url, String name, String longitude, String latitude) {
         this.address = address;
         this.url = url;
         this.name = name;
