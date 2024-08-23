@@ -57,12 +57,12 @@ public class PlanServiceImpl implements PlanService {
     public void deletePlan(Long planId, String userEmail) {
         // 해당 유저가 생성한 계획이 아니면 오류 발생
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("User not found: " + userEmail));
-        if(!planRepository.existsByPlanIdAndUser(planId, user)) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
+
+        if(!(plan.getUser().getId() == user.getId())) {
             throw new IllegalArgumentException("해당 user의 계획이 아닙니다: " + planId);
         }
 
-
-        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
         planRepository.delete(plan);
     }
 
