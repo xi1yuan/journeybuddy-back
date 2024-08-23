@@ -53,12 +53,15 @@ public class MapServiceImpl implements MapService {
                     String name = document.getOrDefault("place_name", "").toString();
                     String roadAddress = document.getOrDefault("road_address_name", "").toString();
                     String place_url = document.getOrDefault("place_url", "").toString();
-                    String tel = document.getOrDefault("phone", "").toString();
+                    String longitude = document.getOrDefault("x", "").toString();
+                    String latitude = document.getOrDefault("y", "").toString();
+
                     places.add(PlaceResponse.builder()
                             .name(name)
                             .address(roadAddress)
                             .url(place_url)
-                            .tel(tel)
+                            .longitude(longitude)
+                            .latitude(latitude)
                             .build());
                 }
             }
