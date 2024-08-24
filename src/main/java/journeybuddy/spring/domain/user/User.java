@@ -8,6 +8,7 @@ import journeybuddy.spring.domain.common.BaseEntity;
 import journeybuddy.spring.domain.community.Comment;
 import journeybuddy.spring.domain.community.Post;
 import journeybuddy.spring.domain.community.UserLike;
+import journeybuddy.spring.domain.plan.Plan;
 import journeybuddy.spring.domain.vote.Vote;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class User extends BaseEntity{
 //    @Column(nullable = false)
     private String bio;
 
-    @NotNull(message = "Password must not be null")
+
     private String password;
 
 
@@ -53,14 +54,6 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
-    /*
-    @JsonIgnore
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<TravelPlan> planList = new ArrayList<>();
-    */
-
-
     @JsonIgnore
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -71,7 +64,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
 
-    //투표여부 확인해야함
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Plan> plans = new ArrayList<>();
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
