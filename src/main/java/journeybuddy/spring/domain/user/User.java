@@ -64,7 +64,9 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Plan> plans = new ArrayList<>();
 
 
