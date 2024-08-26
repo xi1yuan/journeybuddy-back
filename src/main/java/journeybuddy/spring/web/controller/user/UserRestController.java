@@ -130,10 +130,10 @@ public class UserRestController {
                     .body(ApiResponse.onFailure("common403", "접근권한없는사용자", null));
         }
 
-        if (!bCryptPasswordEncoder.matches(request.getPassword(), encodedPassword)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.onFailure("common401", "비밀번호가 일치하지 않음", null));
-        }
+    //    if (!bCryptPasswordEncoder.matches(request.getPassword(), encodedPassword)) {
+    //        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //                .body(ApiResponse.onFailure("common401", "비밀번호가 일치하지 않음", null));
+    //    }
 
         try {
             userCommandService.deletedById(userId);

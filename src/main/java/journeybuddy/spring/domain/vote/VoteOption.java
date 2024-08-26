@@ -3,6 +3,9 @@ package journeybuddy.spring.domain.vote;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -28,6 +31,9 @@ public class VoteOption {
 
     @Column(nullable = false)
     private String optionText;
+
+    @OneToMany(mappedBy = "voteOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VoteRecord> voteRecords = new ArrayList<>();
 
 
 }
