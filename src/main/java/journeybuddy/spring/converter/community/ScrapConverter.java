@@ -33,7 +33,6 @@ public class ScrapConverter {
     public static ScrapResponseDTO toScrapResponseDTO(Scrap scrap) {
         return ScrapResponseDTO.builder()
                 .id(scrap.getId())
-                .postId(scrap.getPost() != null ? scrap.getPost().getId() : null)
                 .userId(scrap.getUser() != null ? scrap.getUser().getId() : null)
                 .postResponse(PostResponse.builder()
                         .postId(scrap.getPost().getId())

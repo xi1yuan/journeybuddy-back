@@ -13,7 +13,6 @@ public class UserLikeResponesDTO {
 
     private Long id;
     private Long userId;
-    private Long postId;
     private int likeCount;
     private PostResponse postResponse;
 }

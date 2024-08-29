@@ -12,7 +12,6 @@ import java.util.List;
 @Builder
 public class ScrapResponseDTO {
     private Long id;
-    private Long postId;
     private Long userId;
     private PostResponse postResponse;
 

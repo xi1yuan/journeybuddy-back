@@ -15,7 +15,6 @@ public class UserLikeConverter {
     public static UserLikeResponesDTO toUserLikeResponesDTO(UserLike userLike) {
         return UserLikeResponesDTO.builder()
                 .userId(userLike.getUser().getId())
-                .postId(userLike.getPost().getId())
                 .id(userLike.getId())
                 .likeCount(userLike.getPost().getLikeCount())
                 .postResponse(PostResponse.builder()

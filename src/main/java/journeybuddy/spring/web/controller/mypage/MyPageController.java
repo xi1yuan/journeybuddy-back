@@ -43,8 +43,10 @@ public class MyPageController {
     @Operation(summary = "내가 누른 좋아요 확인", description = "내가 누른 좋아요 확인")
     @GetMapping("userlikes/myLikes")
     public ApiResponse<Page<UserLikeResponesDTO>> findMyLikes(@AuthenticationPrincipal UserDetails userDetails,
-                                                              Pageable pageable) {
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "9") int size) {
         String userEmail = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page, size);
         Page<UserLikeResponesDTO> likesPage = userLikeServiceImpl.findMyLike(userEmail,pageable);
         return ApiResponse.onSuccess(likesPage);
     }
