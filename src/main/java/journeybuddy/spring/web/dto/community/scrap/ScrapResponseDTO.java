@@ -1,6 +1,9 @@
 package journeybuddy.spring.web.dto.community.scrap;
 
+import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -9,6 +12,7 @@ import lombok.*;
 @Builder
 public class ScrapResponseDTO {
     private Long id;
-    private Long postId;
     private Long userId;
+    private PostResponse postResponse;
+
 }
