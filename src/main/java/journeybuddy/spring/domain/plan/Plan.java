@@ -38,15 +38,14 @@ public class Plan extends BaseEntity {
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Schedule> schedules;
 
-    //한 플랜에 여러개의 투표를 만들 수 있음.
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vote> vote;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "plan")
+    @OneToOne(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private Random random;
 
     @Builder

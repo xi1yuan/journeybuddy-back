@@ -61,7 +61,7 @@ public class UserRestController {
     }
 */
     @PutMapping(value = "/update", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<User> updateUser(
             @RequestPart(required = false) String bio,
     //        @RequestParam(required = false) String nickname,
             @RequestParam(required = false) MultipartFile profileImage,
@@ -74,10 +74,10 @@ public class UserRestController {
     //    request.setNickname(nickname);
 
         // 서비스 호출
-        userCommandService.updateUser(request, profileImage, userEmail);
+        User user = userCommandService.updateUser(request, profileImage, userEmail);
 
         log.info("회원 업데이트 완료");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(user);
     }
 
 /*
@@ -130,10 +130,10 @@ public class UserRestController {
                     .body(ApiResponse.onFailure("common403", "접근권한없는사용자", null));
         }
 
-        if (!bCryptPasswordEncoder.matches(request.getPassword(), encodedPassword)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.onFailure("common401", "비밀번호가 일치하지 않음", null));
-        }
+    //    if (!bCryptPasswordEncoder.matches(request.getPassword(), encodedPassword)) {
+    //        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //                .body(ApiResponse.onFailure("common401", "비밀번호가 일치하지 않음", null));
+    //    }
 
         try {
             userCommandService.deletedById(userId);
