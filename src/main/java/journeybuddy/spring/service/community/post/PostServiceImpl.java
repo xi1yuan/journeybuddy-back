@@ -91,11 +91,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDetailResponse getPostDetail(Long postId, Pageable pageable) {
+    public PostDetailResponse getPostDetail(Long postId, Pageable pageable, String userEmail) {
         Post post = getPost(postId);
         Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
+        User user = findMemberByEmail(userEmail);
 
-        return PostConverter.toPostDetailResponse(post, commentList);
+        boolean isLiked = post.getUserLikeList().stream()
+                .anyMatch(like -> like.getUser().equals(user));
+        boolean isScrapped = post.getScrapList().stream()
+                .anyMatch(scrap -> scrap.getUser().equals(user));
+
+        return PostConverter.toPostDetailResponse(post, commentList, isLiked, isScrapped);
     }
 
     @SneakyThrows

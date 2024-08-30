@@ -15,7 +15,7 @@ public interface PostService {
     List<PostListResponse> searchPosts(String keyword, String sortBy, Pageable pageable);
     List<PostListResponse> getTop3Posts();
     PostResponse createPost(CreatePostRequest request, List<MultipartFile> images, String userEmail);
-    PostDetailResponse getPostDetail(Long postId, Pageable pageable);
+    PostDetailResponse getPostDetail(Long postId, Pageable pageable, String userEmail);
     PostResponse updatePost(Long postId, UpdatePostRequest request, List<MultipartFile> images, String userEmail);
     void deletePost(Long postId, String userEmail);
     PageContentResponse<PostListResponse> getAllPosts(Pageable pageable);
