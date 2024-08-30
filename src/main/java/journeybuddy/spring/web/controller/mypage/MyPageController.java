@@ -11,6 +11,7 @@ import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.service.community.comment.CommentService;
 import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
+import journeybuddy.spring.service.community.post.PostServiceImpl;
 import journeybuddy.spring.service.community.scrap.ScrapService;
 import journeybuddy.spring.web.dto.community.comment.CommentResponseDTO;
 import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
@@ -39,6 +40,7 @@ public class MyPageController {
     private final UserLikeServiceImpl userLikeServiceImpl;
     private final ScrapService scrapService;
     private final CommentRepository commentRepository;
+    private final PostServiceImpl postService;
 
     @Operation(summary = "내가 누른 좋아요 확인", description = "내가 누른 좋아요 확인")
     @GetMapping("userlikes/myLikes")
@@ -77,7 +79,7 @@ public class MyPageController {
 
             Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
             Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
-            PostDetailResponse detailDTO = PostConverter.toPostDetailResponse(detailPost,commentList);
+            PostDetailResponse detailDTO = postService.getPostDetail(postId,pageable, userDetails.getUsername());
             return ApiResponse.onSuccess(detailDTO);
         } else {
             log.error("없는포스트");
