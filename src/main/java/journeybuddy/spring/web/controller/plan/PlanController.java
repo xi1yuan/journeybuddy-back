@@ -37,7 +37,7 @@ public class PlanController {
 
     @GetMapping("/cities/{provinceCode}")
     @Operation(summary = "시/군/구 코드, 이름 조회", description = "특별시/도에 해당하는 시/군/구 코드, 이름을 조회하는 API")
-    public ResponseEntity<List<CityResponse>> getCities(@RequestParam String provinceCode) {
+    public ResponseEntity<List<CityResponse>> getCities(@PathVariable String provinceCode) {
         List<CityResponse> cities = tourApiService.getCities(provinceCode);
         return ResponseEntity.ok(cities);
     }
