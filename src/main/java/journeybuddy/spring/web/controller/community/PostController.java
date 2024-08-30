@@ -8,6 +8,7 @@ import journeybuddy.spring.web.dto.community.post.PageContentResponse;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostListContentResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +97,7 @@ public class PostController {
 
     @GetMapping("/search")
     @Operation(summary = "게시글 검색", description = "게시글 검색 API")
-    public ResponseEntity<List<PostListResponse>> searchPosts(
+    public ResponseEntity<PostListContentResponse> searchPosts(
             @Parameter(description = "검색어", example = "여행")
             @RequestParam(value = "location", defaultValue = "") String location,
             @Parameter(description = "페이지 번호 / 원하는 페이지보다 -1 값으로 요청해주세요", example = "0")

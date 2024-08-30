@@ -14,6 +14,7 @@ import journeybuddy.spring.web.dto.community.post.PageContentResponse;
 import journeybuddy.spring.web.dto.community.post.request.CreatePostRequest;
 import journeybuddy.spring.web.dto.community.post.request.UpdatePostRequest;
 import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
+import journeybuddy.spring.web.dto.community.post.response.PostListContentResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,14 +45,16 @@ public class PostServiceImpl implements PostService {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<PostListResponse> searchPosts(String location, String sortBy, Pageable pageable) {
+    public PostListContentResponse searchPosts(String location, String sortBy, Pageable pageable) {
         List<Post> posts = postRepository.findByLocationEquals(location, pageable);
 
         List<PostListResponse> postListResponses = posts.stream()
                 .map(PostConverter::toPostListResponse)
                 .collect(Collectors.toList());
 
-        return postListResponses;
+        return PostListContentResponse.builder()
+                .content(postListResponses)
+                .build();
     }
 
     @Override
