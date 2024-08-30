@@ -65,24 +65,6 @@ public class MyPageController {
         return ApiResponse.onSuccess(scrapPage);
     }
 
-    //내가 쓴 게시글 상세조회(클릭시)
-    @GetMapping("/posts/{postId}/detail")
-    @Operation(summary = "내가 쓴 게시글 상세보기", description = "내가 쓴 게시글 상세보기")
-    public ApiResponse<PostDetailResponse> checkMyPostDetail(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails,
-                                                             @RequestParam(value = "page", defaultValue = "0") int page) {
-        if (postId != null) {
-            Post detailPost = postCommandService.checkPostDetail(postId, userDetails.getUsername());
-
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
-            Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
-            PostDetailResponse detailDTO = PostConverter.toPostDetailResponse(detailPost,commentList);
-            return ApiResponse.onSuccess(detailDTO);
-        } else {
-            log.error("없는포스트");
-            return ApiResponse.onFailure("COMMON404", "존재하지 않는포스트.", null);
-        }
-    }
-
     //게시글 삭제
     @DeleteMapping("/posts/{postId}/delete")
     @Operation(summary = "게시글 삭제", description = "게시글 삭제")
