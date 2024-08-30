@@ -49,10 +49,11 @@ public class PostController {
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 API")
     public ResponseEntity<PostDetailResponse> getPostDetail(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long postId,
             @RequestParam(value = "page", defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(postService.getPostDetail(postId, pageable));
+        return ResponseEntity.ok(postService.getPostDetail(postId, pageable, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{postId}")

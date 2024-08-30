@@ -19,13 +19,16 @@ public class PostConverter {
 
 
     //게시글 상세보기
-    public static PostDetailResponse toPostDetailResponse(Post post, Page<Comment> commentPage) {
+    public static PostDetailResponse toPostDetailResponse(Post post, Page<Comment> commentPage, boolean isLiked, boolean isScrapped) {
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .location(post.getLocation())
                 .writer(post.getUser().getNickname())
+                .writerId(post.getUser().getId())
+                .isLiked(isLiked)
+                .isScrapped(isScrapped)
                 .createdAt(post.getCreatedAt().toString())
                 .imageUrlList(post.getImages().stream()
                         .map(PostConverter::toImageDTO)
