@@ -3,12 +3,14 @@ package journeybuddy.spring.web.dto.plan.request;
 import journeybuddy.spring.web.dto.plan.ScheduleDTO;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Getter
 public class SavePlanRequest {
     private String planName;
     private LocalDate startDate;

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import journeybuddy.spring.service.plan.create.MapService;
 import journeybuddy.spring.service.plan.create.PlanService;
 import journeybuddy.spring.service.plan.create.TourApiService;
+import journeybuddy.spring.service.plan.info.PlanInfoService;
 import journeybuddy.spring.web.dto.plan.request.SavePlanRequest;
 import journeybuddy.spring.web.dto.plan.request.TravelPlanRequest;
 import journeybuddy.spring.web.dto.plan.response.*;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "Travel Plan API", description = "여행 계획 생성 관련 API")
+@Tag(name = "Travel Plan API", description = "여행 계획 관련 API")
 @Slf4j
 @RestController
 @RequestMapping("/plans")
@@ -27,6 +28,7 @@ public class PlanController {
     private final TourApiService tourApiService;
     private final MapService mapService;
     private final PlanService planService;
+    private final PlanInfoService planInfoService;
 
     @GetMapping("/provinces")
     @Operation(summary = "특별시/도 코드, 이름 조회", description = "특별시/도 코드, 이름을 조회하는 API")
@@ -84,6 +86,13 @@ public class PlanController {
     public ResponseEntity<Map<String, String>> deletePlan(@PathVariable Long planId, @AuthenticationPrincipal UserDetails userDetails) {
         planService.deletePlan(planId, userDetails.getUsername());
         return ResponseEntity.ok(Map.of("message", "여행 계획 삭제 성공"));
+    }
+
+    @GetMapping("/plan-info/{planId}")
+    @Operation(summary = "여행 계획 상세 조회", description = "여행 계획 상세 조회 API / 저장된 여행 계획의 상세 정보를 조회합니다.")
+    public ResponseEntity<TravelPlanResponse> getPlanInfo(@PathVariable Long planId, @AuthenticationPrincipal UserDetails userDetails) {
+        TravelPlanResponse travelPlanResponse = planInfoService.getPlanInfo(userDetails.getUsername(), planId);
+        return ResponseEntity.ok(travelPlanResponse);
     }
 
 }

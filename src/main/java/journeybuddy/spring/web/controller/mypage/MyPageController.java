@@ -11,7 +11,6 @@ import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.service.community.comment.CommentService;
 import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
-import journeybuddy.spring.service.community.post.PostServiceImpl;
 import journeybuddy.spring.service.community.scrap.ScrapService;
 import journeybuddy.spring.web.dto.community.comment.CommentResponseDTO;
 import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
@@ -40,15 +39,12 @@ public class MyPageController {
     private final UserLikeServiceImpl userLikeServiceImpl;
     private final ScrapService scrapService;
     private final CommentRepository commentRepository;
-    private final PostServiceImpl postService;
 
     @Operation(summary = "내가 누른 좋아요 확인", description = "내가 누른 좋아요 확인")
     @GetMapping("userlikes/myLikes")
     public ApiResponse<Page<UserLikeResponesDTO>> findMyLikes(@AuthenticationPrincipal UserDetails userDetails,
-                                                              @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "9") int size) {
+                                                              Pageable pageable) {
         String userEmail = userDetails.getUsername();
-        Pageable pageable = PageRequest.of(page, size);
         Page<UserLikeResponesDTO> likesPage = userLikeServiceImpl.findMyLike(userEmail,pageable);
         return ApiResponse.onSuccess(likesPage);
     }
@@ -67,24 +63,6 @@ public class MyPageController {
         String userEmail = userDetails.getUsername();
         Page<ScrapResponseDTO> scrapPage = scrapService.findAll(userEmail,pageable);
         return ApiResponse.onSuccess(scrapPage);
-    }
-
-    //내가 쓴 게시글 상세조회(클릭시)
-    @GetMapping("/posts/{postId}/detail")
-    @Operation(summary = "내가 쓴 게시글 상세보기", description = "내가 쓴 게시글 상세보기")
-    public ApiResponse<PostDetailResponse> checkMyPostDetail(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails,
-                                                             @RequestParam(value = "page", defaultValue = "0") int page) {
-        if (postId != null) {
-            Post detailPost = postCommandService.checkPostDetail(postId, userDetails.getUsername());
-
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
-            Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
-            PostDetailResponse detailDTO = postService.getPostDetail(postId,pageable, userDetails);
-            return ApiResponse.onSuccess(detailDTO);
-        } else {
-            log.error("없는포스트");
-            return ApiResponse.onFailure("COMMON404", "존재하지 않는포스트.", null);
-        }
     }
 
     //게시글 삭제
