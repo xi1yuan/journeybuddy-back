@@ -54,7 +54,7 @@ public class PostController {
             @PathVariable Long postId,
             @RequestParam(value = "page", defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
-        return ResponseEntity.ok(postService.getPostDetail(postId, pageable, userDetails.getUsername()));
+        return ResponseEntity.ok(postService.getPostDetail(postId, pageable, userDetails));
     }
 
     @DeleteMapping("/{postId}")

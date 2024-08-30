@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,10 +95,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDetailResponse getPostDetail(Long postId, Pageable pageable, String userEmail) {
+    public PostDetailResponse getPostDetail(Long postId, Pageable pageable, UserDetails userDetails) {
         Post post = getPost(postId);
         Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
-        User user = findMemberByEmail(userEmail);
+        User user;
+        if(userDetails != null)
+            user = findMemberByEmail(userDetails.getUsername());
+        else
+            user = null;
 
         boolean isLiked = post.getUserLikeList().stream()
                 .anyMatch(like -> like.getUser().equals(user));

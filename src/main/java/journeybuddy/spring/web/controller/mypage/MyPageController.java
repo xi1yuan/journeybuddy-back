@@ -79,7 +79,7 @@ public class MyPageController {
 
             Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
             Page<Comment> commentList = commentRepository.findAllByPostId(postId, pageable);
-            PostDetailResponse detailDTO = postService.getPostDetail(postId,pageable, userDetails.getUsername());
+            PostDetailResponse detailDTO = postService.getPostDetail(postId,pageable, userDetails);
             return ApiResponse.onSuccess(detailDTO);
         } else {
             log.error("없는포스트");
