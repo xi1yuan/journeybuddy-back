@@ -1,32 +1,33 @@
 package journeybuddy.spring.web.controller.mypage;
 
-import io.swagger.annotations.ApiOperation;
+
 import io.swagger.v3.oas.annotations.Operation;
 import journeybuddy.spring.apiPayload.ApiResponse;
 import journeybuddy.spring.converter.community.PostConverter;
-import journeybuddy.spring.domain.community.Comment;
 import journeybuddy.spring.domain.community.Post;
-import journeybuddy.spring.repository.community.CommentRepository;
 import journeybuddy.spring.repository.community.PostRepository;
 import journeybuddy.spring.service.community.comment.CommentService;
 import journeybuddy.spring.service.community.like.UserLikeServiceImpl;
 import journeybuddy.spring.service.community.post.PostCommandService;
 import journeybuddy.spring.service.community.scrap.ScrapService;
+import journeybuddy.spring.service.plan.info.PlanInfoService;
 import journeybuddy.spring.web.dto.community.comment.CommentResponseDTO;
 import journeybuddy.spring.web.dto.community.like.UserLikeResponesDTO;
 import journeybuddy.spring.web.dto.community.post.PostResponseDTO;
-import journeybuddy.spring.web.dto.community.post.response.PostDetailResponse;
 import journeybuddy.spring.web.dto.community.post.response.PostListResponse;
 import journeybuddy.spring.web.dto.community.scrap.ScrapResponseDTO;
+import journeybuddy.spring.web.dto.plan.response.PlanListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -38,7 +39,7 @@ public class MyPageController {
     private final CommentService commentService;
     private final UserLikeServiceImpl userLikeServiceImpl;
     private final ScrapService scrapService;
-    private final CommentRepository commentRepository;
+    private final PlanInfoService planInfoService;
 
     @Operation(summary = "내가 누른 좋아요 확인", description = "내가 누른 좋아요 확인")
     @GetMapping("userlikes/myLikes")
@@ -125,5 +126,16 @@ public class MyPageController {
         log.info("나의 모든 댓글 조회");
         Page<CommentResponseDTO> checkMyComment = commentService.checkMyComment(userEmail,pageable);
         return ApiResponse.onSuccess(checkMyComment);
+    }
+
+    // 나의 계획 리스트 조회
+    @GetMapping("/plans")
+    @Operation(summary = "나의 계획 리스트 조회", description = "나의 계획 리스트 조회")
+    public ResponseEntity<List<PlanListResponse>> getMyPlans(@AuthenticationPrincipal UserDetails userDetails,
+                                                             @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "9") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(planInfoService.getPlanList(userDetails.getUsername(), pageable));
     }
 }
