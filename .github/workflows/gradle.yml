@@ -36,10 +36,11 @@ jobs:
     - name: Grant execute permission for Gradle Wrapper
       run: chmod +x ./gradlew
 
-    - name: Create configuration files
+    - name: Create application-secret.properties and config.properties
       run: |
-        echo "kakao.client.id=${{ secrets.CONFIG }}" > ./src/main/resources/config.properties
-        echo "application.secret=${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.properties
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.properties
+          echo "${{ secrets.CONFIG }}" > ./src/main/resources/config.properties
+      shell: bash
 
 
     - name: Build with Gradle Wrapper
