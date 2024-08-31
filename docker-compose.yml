@@ -1,0 +1,16 @@
+
+
+services:
+
+
+  app:
+    build: .
+    container_name: spring_boot_app
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+
+
+volumes:
+  db_data:
