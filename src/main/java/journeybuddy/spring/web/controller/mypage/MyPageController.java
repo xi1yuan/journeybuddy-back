@@ -96,7 +96,7 @@ public class MyPageController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        String userEmail = userDetails.getUsername(); // JWT로 인증된 사용자의 이메일 가져오기
+        String userEmail = userDetails.getUsername();
         log.info("게시글 조회 userId = {}", userEmail);
         Page<PostListResponse> myPost = postCommandService.getMyPeed(userEmail,pageable);
         return ApiResponse.onSuccess(myPost);
